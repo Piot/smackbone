@@ -166,3 +166,13 @@
 				first: first
 
 			second.path().should.eql '/first/second'
+
+		it 'should be possible to access submodels using attribute', ->
+			first = new smackbone.Model
+			second = new smackbone.Model
+			second.set 'secret', 'pepper'
+
+			first.set
+				second: second
+
+			first.second.get('secret').should.eql 'pepper'

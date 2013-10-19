@@ -42,6 +42,7 @@
 						if not value._parent?
 							value._parent = @
 							value._properties['id'] = name
+							@[name] = value
 
 					current[name] = value
 
