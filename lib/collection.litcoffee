@@ -25,6 +25,7 @@
 			idAttribute = 'id'
 
 			for object in objects
+				object._parent = @
 				id = object[idAttribute]
 				if id?
 					super id, object

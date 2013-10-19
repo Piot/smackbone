@@ -12,6 +12,9 @@
 		toJSON: ->
 			@_properties
 
+		isNew: ->
+			not @id?
+
 		set: (key, value) ->
 			return if not key?
 
@@ -75,13 +78,23 @@
 		path: ->
 			if @_parent?
 				prefix = @_parent.path()
-				"#{prefix}/#{@id}"
+				"#{prefix}/#{@id ? ''}"
 			else
 				@rootPath ? ''
 
+		_root: ->
+			model = @
+			while model._parent?
+				model = model._parent
+			model
+
 		fetch: ->
+			@_root().trigger 'fetch_request', @path(), @
 			@trigger 'fetch', @
 
+		save: ->
+			@_root().trigger 'save_request', @path(), @
+			@trigger 'save', @
 
 		destroy: ->
 			@trigger 'destroy', @

@@ -3,15 +3,25 @@
   var Smackbone, root, _, _ref,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   if (typeof exports !== "undefined" && exports !== null) {
     Smackbone = exports;
     _ = require('underscore');
+    Smackbone.$ = {
+      done: function(func) {
+        return func();
+      },
+      ajax: function(options) {
+        return this;
+      }
+    };
   } else {
     root = this;
     _ = root._;
     Smackbone = root.Smackbone = {};
+    Smackbone.$ = root.$;
   }
 
   Smackbone.Event = (function() {
@@ -114,6 +124,10 @@
       return this._properties;
     };
 
+    Model.prototype.isNew = function() {
+      return this.id == null;
+    };
+
     Model.prototype.set = function(key, value) {
       var attributes, changeName, changedPropertyNames, current, idAttribute, isChanged, modelClass, name, options, previous, _i, _len, _ref, _ref1;
       if (key == null) {
@@ -189,17 +203,32 @@
     };
 
     Model.prototype.path = function() {
-      var prefix, _ref;
+      var prefix, _ref, _ref1;
       if (this._parent != null) {
         prefix = this._parent.path();
-        return "" + prefix + "/" + this.id;
+        return "" + prefix + "/" + ((_ref = this.id) != null ? _ref : '');
       } else {
-        return (_ref = this.rootPath) != null ? _ref : '';
+        return (_ref1 = this.rootPath) != null ? _ref1 : '';
       }
     };
 
+    Model.prototype._root = function() {
+      var model;
+      model = this;
+      while (model._parent != null) {
+        model = model._parent;
+      }
+      return model;
+    };
+
     Model.prototype.fetch = function() {
+      this._root().trigger('fetch_request', this.path(), this);
       return this.trigger('fetch', this);
+    };
+
+    Model.prototype.save = function() {
+      this._root().trigger('save_request', this.path(), this);
+      return this.trigger('save', this);
     };
 
     Model.prototype.destroy = function() {
@@ -253,6 +282,7 @@
       _results = [];
       for (_i = 0, _len = objects.length; _i < _len; _i++) {
         object = objects[_i];
+        object._parent = this;
         id = object[idAttribute];
         if (id != null) {
           _results.push(Collection.__super__.set.call(this, id, object));
@@ -282,5 +312,62 @@
     return Collection;
 
   })(Smackbone.Model);
+
+  Smackbone.Syncer = (function(_super) {
+    __extends(Syncer, _super);
+
+    function Syncer(options) {
+      this._onSaveRequest = __bind(this._onSaveRequest, this);
+      this._onFetchRequest = __bind(this._onFetchRequest, this);
+      this.root = options.model;
+      this.root.on('fetch_request', this._onFetchRequest);
+      this.root.on('save_request', this._onSaveRequest);
+    }
+
+    Syncer.prototype._onFetchRequest = function(path) {
+      var options,
+        _this = this;
+      options = {};
+      options.type = 'GET';
+      options.done = function(response) {
+        var model;
+        model = _this._findModel(path);
+        return model.set(response);
+      };
+      return this._request(options, path);
+    };
+
+    Syncer.prototype._findModel = function(path) {
+      var model, part, parts, _i, _len;
+      parts = (path.split('/')).slice(1);
+      model = this.root;
+      for (_i = 0, _len = parts.length; _i < _len; _i++) {
+        part = parts[_i];
+        model = model.get(part);
+      }
+      return model;
+    };
+
+    Syncer.prototype._onSaveRequest = function(path, model) {
+      var options,
+        _this = this;
+      options = {};
+      options.type = model.isNew() ? 'POST' : 'PUT';
+      options.done = function(response) {
+        return model.set(response);
+      };
+      return this._request(options, path);
+    };
+
+    Syncer.prototype._request = function(options, path) {
+      var _ref1;
+      options.url = ((_ref1 = this.urlRoot) != null ? _ref1 : '') + path;
+      this.trigger('request', options);
+      return Smackbone.$.ajax(options).done(options.done);
+    };
+
+    return Syncer;
+
+  })(Smackbone.Event);
 
 }).call(this);
