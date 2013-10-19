@@ -4,7 +4,7 @@
 	"author": "Peter Bjorklund <piot@hotmail.com>",
 	"description": "an object oriented model framework",
 	"scripts": {
-		"test": "mocha"
+		"test": "bin/test.sh;mocha"
 	},
 	"main": "./lib/smackbone.js",
 	"repository": {

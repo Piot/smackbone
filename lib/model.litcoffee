@@ -29,8 +29,6 @@
 					changedPropertyNames.push name
 				if previous[name] isnt value
 					@changed[name] = value
-				else
-					delete @changed[name]
 
 				if current[name]?.set?
 					current[name].set value
