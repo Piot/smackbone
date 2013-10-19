@@ -27,6 +27,14 @@
 
 			@model.get('name').should.equal 'test'
 
+		it 'should unset properties', ->
+			@model.set
+				color: 'red'
+
+			@model.get('color').should.eql 'red'
+			@model.unset 'color'
+			should.equal @model.get('color'), undefined
+
 
 		it 'should fire change events', (done) ->
 			detectedChange = false
@@ -135,6 +143,22 @@
 			@model.set
 				sub:
 					age: 44
+
+		it 'should not replace models, even when they are in a hierarchy', ->
+			age = new smackbone.Model
+				years: 43
+
+			car = new smackbone.Model
+				age: age
+
+			@model.set 'car', car
+
+			@model.set
+				car:
+					age:
+						years: 99
+
+			age.get('years').should.equal(99)
 
 
 		it 'should fire unset when property is replaced', (done) ->

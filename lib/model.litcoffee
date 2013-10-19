@@ -5,12 +5,14 @@
 
 		constructor: (attributes, options) ->
 			@_properties = {}
+			@cid = _.uniqueId 'm'
+
 			properties = attributes ? {}
 			@set properties
 			@initialize? properties
 
-
 		set: (key, value) ->
+			idAttribute = 'id'
 			if typeof key is 'object'
 				attributes = key
 				options = value
@@ -25,8 +27,12 @@
 			@changed = {}
 
 			for name, value of attributes
+				if name is idAttribute
+					@[idAttribute] = value
+
 				if current[name] isnt value
 					changedPropertyNames.push name
+
 				if previous[name] isnt value
 					@changed[name] = value
 
@@ -41,7 +47,7 @@
 					if value instanceof exports.Model
 						if not value._parent?
 							value._parent = @
-							value._properties['id'] = name
+							value.id = name
 							@[name] = value
 
 					current[name] = value
@@ -59,13 +65,14 @@
 
 		unset: (key) ->
 			model = @_properties[key]
+			delete @_properties[key]
 			model?.trigger? 'unset', model
-
+			model?.trigger? 'remove', model
 
 		path: ->
 			if @_parent?
 				prefix = @_parent.path()
-				"#{prefix}/#{@get('id')}"
+				"#{prefix}/#{@id}"
 			else
 				@rootPath ? ''
 
