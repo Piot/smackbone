@@ -1,7 +1,5 @@
 
-	_ = require 'underscore'
-
-	class exports.Collection extends exports.Model
+	class Smackbone.Collection extends Smackbone.Model
 
 		add: (object) ->
 			@set object

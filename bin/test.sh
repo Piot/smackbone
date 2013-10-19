@@ -1,1 +1,1 @@
-cat lib/event.js lib/model.js lib/collection.js > out/smackbone.js
+cat lib/header.litcoffee lib/event.litcoffee lib/model.litcoffee lib/collection.litcoffee > out/smackbone.litcoffee

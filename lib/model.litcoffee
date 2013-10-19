@@ -1,7 +1,5 @@
 
-	_ = require 'underscore'
-
-	class exports.Model extends exports.Event
+	class Smackbone.Model extends Smackbone.Event
 
 		constructor: (attributes, options) ->
 			@_properties = {}
@@ -49,7 +47,7 @@
 						if modelClass?
 							value = new modelClass value
 	
-					if value instanceof exports.Model
+					if value instanceof Smackbone.Model
 						if not value._parent?
 							value._parent = @
 							value.id = name

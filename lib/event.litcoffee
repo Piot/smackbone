@@ -1,6 +1,6 @@
 
 
-	class exports.Event
+	class Smackbone.Event
 		trigger: (name, args...) ->
 			events = @_events?[name]
 			@_triggerEvents events, args... if events?
