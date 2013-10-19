@@ -14,6 +14,7 @@
 			new Init
 				hello: 'world'
 
+
 		it 'should set properties using their name', ->
 			@model.set 'space', 'is big'
 			@model.get('space').should.equal 'is big'
@@ -145,3 +146,23 @@
 				done()
 
 			@model.unset 'sub'
+
+		it 'should report path for sub models', ->
+
+			subModel = new smackbone.Model
+			@model.set 
+				sub: subModel
+
+			subModel.path().should.eql '/sub'
+
+		it 'should reoport path for multiple sub models', ->
+			first = new smackbone.Model
+			second = new smackbone.Model
+
+			first.set
+				second: second
+
+			@model.set
+				first: first
+
+			second.path().should.eql '/first/second'

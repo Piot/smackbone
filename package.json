@@ -3,6 +3,9 @@
 	"version": "0.1.0",
 	"author": "Peter Bjorklund <piot@hotmail.com>",
 	"description": "an object oriented model framework",
+	"dependencies": {
+		"underscore": ">=1.4.3"
+	},
 	"scripts": {
 		"test": "bin/test.sh;mocha"
 	},

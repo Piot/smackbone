@@ -37,6 +37,11 @@
 						modelClass = @models?[name]
 						if modelClass?
 							value = new modelClass value
+	
+					if value instanceof exports.Model
+						if not value._parent?
+							value._parent = @
+							value._properties['id'] = name
 
 					current[name] = value
 
@@ -55,6 +60,13 @@
 			model = @_properties[key]
 			model?.trigger? 'unset', model
 
+
+		path: ->
+			if @_parent?
+				prefix = @_parent.path()
+				"#{prefix}/#{@get('id')}"
+			else
+				@rootPath ? ''
 
 		fetch: ->
 			@trigger 'fetch', @
