@@ -160,6 +160,25 @@
 
 			age.get('years').should.equal(99)
 
+		it 'should produce toJSON() objects', ->
+			age = new smackbone.Model
+				years: 43
+
+			car = new smackbone.Model
+				age: age
+
+			@model.set 'car', car
+
+			@model.set
+				car:
+					age:
+						years: 99
+
+			age.get('years').should.equal(99)
+
+			json = JSON.stringify @model.toJSON()
+			json.should.equal '{"car":{"age":{"years":99}}}'
+
 
 		it 'should fire unset when property is replaced', (done) ->
 			subModel = new smackbone.Model

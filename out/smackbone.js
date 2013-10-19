@@ -107,8 +107,15 @@
       }
     }
 
+    Model.prototype.toJSON = function() {
+      return this._properties;
+    };
+
     Model.prototype.set = function(key, value) {
       var attributes, changeName, changedPropertyNames, current, idAttribute, isChanged, modelClass, name, options, previous, _i, _len, _ref, _ref1;
+      if (key == null) {
+        return;
+      }
       idAttribute = 'id';
       if (typeof key === 'object') {
         attributes = key;
@@ -157,8 +164,9 @@
       }
       isChanged = changedPropertyNames.length > 0;
       if (isChanged) {
-        return this.trigger('change', this);
+        this.trigger('change', this);
       }
+      return value;
     };
 
     Model.prototype.get = function(key) {
@@ -231,7 +239,10 @@
     };
 
     Collection.prototype.set = function(objects) {
-      var id, idAttribute, object, _i, _len, _results;
+      var id, idAttribute, model, object, _i, _len, _results;
+      if (_.isEmpty(objects)) {
+        return;
+      }
       objects = _.isArray(objects) ? objects : [objects];
       idAttribute = 'id';
       _results = [];
@@ -239,12 +250,13 @@
         object = objects[_i];
         id = object[idAttribute];
         if (id != null) {
-          Collection.__super__.set.call(this, id, object);
-        }
-        if (object instanceof exports.Model) {
-          _results.push(Collection.__super__.set.call(this, object.cid, object));
+          _results.push(Collection.__super__.set.call(this, id, object));
         } else {
-          _results.push(void 0);
+          model = object;
+          if (model.cid == null) {
+            throw "illegal";
+          }
+          _results.push(Collection.__super__.set.call(this, model.cid, model));
         }
       }
       return _results;
@@ -252,9 +264,14 @@
 
     Collection.prototype.remove = function(object) {
       if (object.id != null) {
-        this.unset(object.id);
+        return this.unset(object.id);
+      } else {
+        return this.unset(object.cid);
       }
-      return this.unset(object.cid);
+    };
+
+    Collection.prototype.toJSON = function() {
+      return _.toArray(Collection.__super__.toJSON.call(this));
     };
 
     return Collection;

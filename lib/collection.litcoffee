@@ -6,6 +6,7 @@
 		add: (object) ->
 			@set object
 
+
 		get: (object) ->
 			if object.id?
 				super object.id
@@ -14,7 +15,13 @@
 			else
 				super object
 
+
 		set: (objects) ->
+
+ We have to check if it is called with an empty object from Model constructor
+
+			return if _.isEmpty objects
+
 			objects = if _.isArray(objects) then objects else [objects]
 
 			idAttribute = 'id'
@@ -23,14 +30,18 @@
 				id = object[idAttribute]
 				if id?
 					super id, object
-
-				if object instanceof exports.Model
-					super object.cid, object
+				else
+					model = object
+					throw "illegal" if not model.cid?
+					super model.cid, model
 
 
 		remove: (object) ->
 			if object.id?
 				@unset object.id
+			else
+				@unset object.cid
 
-			@unset object.cid
 
+		toJSON: ->
+			_.toArray super()

@@ -11,7 +11,12 @@
 			@set properties
 			@initialize? properties
 
+		toJSON: ->
+			@_properties
+
 		set: (key, value) ->
+			return if not key?
+
 			idAttribute = 'id'
 			if typeof key is 'object'
 				attributes = key
@@ -57,7 +62,7 @@
 
 			isChanged = changedPropertyNames.length > 0
 			@trigger 'change', @ if isChanged
-
+			value
 
 		get: (key) ->
 			@_properties[key]

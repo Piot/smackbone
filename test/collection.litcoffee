@@ -62,3 +62,16 @@
 			
 			@collection.add flower
 			flower.path().should.equal '/flowers/wallflower'
+
+		it 'should report a correct json', ->
+			flower = new smackbone.Model
+				id: '128'
+				name: 'tulip'
+
+			root = new smackbone.Model
+				flowers: @collection
+			
+			@collection.add flower
+			json = JSON.stringify root.toJSON()
+			json.should.equal '{"flowers":[{"id":"128","name":"tulip"}]}'
+
