@@ -1,1 +1,1 @@
-cat lib/event.js lib/model.js > lib/smackbone.js
+cat lib/event.js lib/model.js > out/smackbone.js

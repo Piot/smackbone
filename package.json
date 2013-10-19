@@ -9,7 +9,7 @@
 	"scripts": {
 		"test": "bin/test.sh;mocha"
 	},
-	"main": "./lib/smackbone.js",
+	"main": "./out/smackbone.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/piot/smackbone.git"

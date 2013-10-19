@@ -1,5 +1,5 @@
 
-	smackbone = require '../lib/smackbone'
+	smackbone = require '../out/smackbone'
 	should = require 'should'
 
 	describe 'events', ->
