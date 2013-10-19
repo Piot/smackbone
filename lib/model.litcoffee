@@ -87,3 +87,7 @@
 
 		destroy: ->
 			@trigger 'destroy', @
+
+		each: (func) ->
+			for object, x of @_properties
+				func x

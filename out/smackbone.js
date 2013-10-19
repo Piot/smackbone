@@ -203,6 +203,17 @@
       return this.trigger('destroy', this);
     };
 
+    Model.prototype.each = function(func) {
+      var object, x, _ref, _results;
+      _ref = this._properties;
+      _results = [];
+      for (object in _ref) {
+        x = _ref[object];
+        _results.push(func(x));
+      }
+      return _results;
+    };
+
     return Model;
 
   })(exports.Event);

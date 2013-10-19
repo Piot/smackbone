@@ -75,3 +75,19 @@
 			json = JSON.stringify root.toJSON()
 			json.should.equal '{"flowers":[{"id":"128","name":"tulip"}]}'
 
+		it 'should be possible to enumerate', ->
+			model = new smackbone.Model
+				id: 'test1'
+
+			model2 = new smackbone.Model
+				id: 'test2'
+
+			@collection.add model2
+			@collection.add model
+
+			ids = []
+			@collection.each (model) ->
+				ids.push model.id
+
+			ids.should.eql ['test2', 'test1']
+

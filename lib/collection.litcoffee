@@ -42,6 +42,5 @@
 			else
 				@unset object.cid
 
-
 		toJSON: ->
 			_.toArray super()
