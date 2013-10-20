@@ -173,7 +173,7 @@
             }
           }
           current[name] = value;
-          this.length = Object.keys(current).length;
+          this.length = _.keys(current).length;
         }
       }
       for (_i = 0, _len = changedPropertyNames.length; _i < _len; _i++) {
