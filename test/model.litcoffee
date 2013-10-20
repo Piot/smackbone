@@ -219,3 +219,65 @@
 				second: second
 
 			first.second.get('secret').should.eql 'pepper'
+
+		it 'should create models from hierarchy', ->
+
+			class Flower
+
+			class Flowers extends smackbone.Collection
+				model: Flower
+
+				flowerCount: ->
+					@length
+
+			class Garden extends smackbone.Model
+				models:
+					flowers: Flowers
+
+				numberOfFlowers: ->
+					@get('flowers').flowerCount()
+
+
+			class Gardens extends smackbone.Collection
+				model: Garden
+
+			owner = new smackbone.Model
+			owner.models =
+				gardens: Gardens
+
+			owner.set
+				gardens: [
+					id: -1
+					flowers: [
+						id: 10
+						name: 'rose'
+					,
+						id: 96
+						name: 'tulip'
+					]
+				,
+					id: 2
+					flowers: [
+						id: 0
+						name: 'sunflower'
+					,
+						id: 1
+						name: 'orchid'
+					,
+						id: 4
+						name: 'dahlia'
+					]
+
+				]
+				name: 'peter'
+
+			gardens = owner.gardens
+			gardens.should.be.instanceof Gardens
+
+			garden = owner.gardens.get('-1')
+			garden.should.be.instanceof Garden
+			garden.numberOfFlowers().should.equal 2
+
+			garden = owner.gardens.get('2')
+			garden.should.be.instanceof Garden
+			garden.numberOfFlowers().should.equal 3

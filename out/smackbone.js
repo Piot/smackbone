@@ -161,6 +161,9 @@
         } else {
           if (current[name] == null) {
             modelClass = (_ref1 = this.models) != null ? _ref1[name] : void 0;
+            if ((modelClass == null) && _.isArray(value)) {
+              modelClass = Smackbone.Collection;
+            }
             if (modelClass != null) {
               value = new modelClass(value);
             }

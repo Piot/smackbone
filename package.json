@@ -1,6 +1,6 @@
 {
 	"name": "smackbone",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"author": "Peter Bjorklund <piot@hotmail.com>",
 	"description": "an object oriented model framework",
 	"dependencies": {

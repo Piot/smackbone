@@ -47,6 +47,9 @@
 				else 
 					if not current[name]?
 						modelClass = @models?[name]
+						if not modelClass? and _.isArray value
+							modelClass = Smackbone.Collection
+
 						if modelClass?
 							value = new modelClass value
 	

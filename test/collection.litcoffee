@@ -15,7 +15,7 @@
 
 			returnedModel = @collection.get 2
 			should.equal returnedModel, undefined
-
+		
 		it 'should update existing models', ->
 			vehicle = new smackbone.Model
 			vehicle.set 'wheels', @collection
@@ -142,4 +142,8 @@
 			]
 
 			garden = @collection.get(0)
+			garden.should.be.an.instanceof Garden
+			garden.flowers.should.be.an.instanceof Flowers
+			tulip = garden.flowers.get('96')
+			tulip.should.be.an.instanceof Flower
 			garden.numberOfFlowers().should.equal 2
