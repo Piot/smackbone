@@ -15,6 +15,9 @@
 		isNew: ->
 			not @id?
 
+		clone: ->
+      			new @constructor @_properties
+
 		set: (key, value) ->
 			return if not key?
 

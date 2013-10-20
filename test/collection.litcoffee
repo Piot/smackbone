@@ -147,3 +147,19 @@
 			tulip = garden.flowers.get('96')
 			tulip.should.be.an.instanceof Flower
 			garden.numberOfFlowers().should.equal 2
+
+
+		it 'should create models and issue a save request', (done) ->
+			class Toy extends smackbone.Model
+			@collection.model = Toy
+
+			@collection.on 'save_request', (path, model) =>
+				model.should.instanceof Toy
+				path.should.equal '/'
+				model.get('name').should.equal 'ambulance'
+				should.strictEqual model.get('id'), undefined
+				@collection.get(model).should.equal model
+				done()
+
+			model = @collection.create 
+				name: 'ambulance'

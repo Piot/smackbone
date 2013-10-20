@@ -21,9 +21,16 @@
 				klass = @model ? Smackbone.Model
 				model = new klass object
 				model[idAttribute] = object.id
-				model.cid = object.cid
+				if object.cid?
+					model.cid = object.cid
 				model
 
+		create: (object) ->
+			model = @_toModel object
+			model._parent = @
+			@set model
+			model.save()
+			model
 
 		_isExistingModel: (object) ->
 			id = object[idAttribute]

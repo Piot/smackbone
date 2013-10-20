@@ -128,6 +128,10 @@
       return this.id == null;
     };
 
+    Model.prototype.clone = function() {
+      return new this.constructor(this._properties);
+    };
+
     Model.prototype.set = function(key, value) {
       var attributes, changeName, changedPropertyNames, current, idAttribute, isChanged, modelClass, name, options, previous, _i, _len, _ref, _ref1;
       if (key == null) {
@@ -288,9 +292,20 @@
         klass = (_ref1 = this.model) != null ? _ref1 : Smackbone.Model;
         model = new klass(object);
         model[idAttribute] = object.id;
-        model.cid = object.cid;
+        if (object.cid != null) {
+          model.cid = object.cid;
+        }
         return model;
       }
+    };
+
+    Collection.prototype.create = function(object) {
+      var model;
+      model = this._toModel(object);
+      model._parent = this;
+      this.set(model);
+      model.save();
+      return model;
     };
 
     Collection.prototype._isExistingModel = function(object) {

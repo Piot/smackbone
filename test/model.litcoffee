@@ -19,6 +19,16 @@
 			@model.set 'space', 'is big'
 			@model.get('space').should.equal 'is big'
 
+		it 'should clone itself', ->
+			@model.set 'space', 'is big'
+
+			clone = @model.clone()
+			clone.get('space').should.equal 'is big'
+			@model.get('space').should.equal 'is big'
+
+			clone.set 'space', 'is infinite'
+			@model.get('space').should.equal 'is big'
+			clone.get('space').should.equal 'is infinite'
 
 		it 'should set properties', ->
 			@model.set
