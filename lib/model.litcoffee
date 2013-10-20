@@ -57,6 +57,7 @@
 							@[name] = value
 
 					current[name] = value
+					@length = Object.keys(current).length
 
 			for changeName in changedPropertyNames
 				@trigger "change:#{changeName}", @, current[changeName]

@@ -1,5 +1,6 @@
 
 	class Smackbone.Collection extends Smackbone.Model
+		idAttribute = 'id'
 
 		add: (object) ->
 			@set object
@@ -13,6 +14,26 @@
 			else
 				super object
 
+		_toModel: (object) ->
+			if object instanceof Smackbone.Model
+				object
+			else
+				klass = @model ? Smackbone.Model
+				model = new klass object
+				model[idAttribute] = object.id
+				model.cid = object.cid
+				model
+
+
+		_isExistingModel: (object) ->
+			id = object[idAttribute]
+			if id?
+				existingModel = @get id
+			if not existingModel?
+				cid = object['cid']
+				if cid?
+					existingModel = @get cid
+			existingModel?
 
 		set: (objects) ->
 
@@ -22,18 +43,21 @@
 
 			objects = if _.isArray(objects) then objects else [objects]
 
-			idAttribute = 'id'
 
 			for object in objects
-				object._parent = @
-				id = object[idAttribute]
-				if id?
-					super id, object
+				if not @_isExistingModel object
+					model = @_toModel object
 				else
 					model = object
-					throw "illegal" if not model.cid?
-					super model.cid, model
 
+				model._parent = @
+
+				id = model[idAttribute]
+				if id?
+					super id, model
+				else
+					throw "An object in a collection must have an id or cid attribute" if not model.cid?
+					super model.cid, model
 
 		remove: (object) ->
 			if object.id?

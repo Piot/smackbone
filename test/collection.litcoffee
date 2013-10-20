@@ -91,4 +91,55 @@
 
 			ids.should.eql ['test2', 'test1']
 
+		it 'should create models from array', ->
+			class PriceTag
+				constructor: (data) ->
+					@price = data.price
+
+				priceWithTax: ->
+					@price * 1.5
+
+			data = [
+				id: 1
+				price: 3.5
+			,
+				id: 4
+				price: 100.0
+			]
+			@collection.model = PriceTag
+
+			@collection.set data
+			@collection.get(4).priceWithTax().should.equal 150.0
 		
+		it 'should create models from hierarchy', ->
+
+			class Flower
+
+			class Flowers extends smackbone.Collection
+				model: Flower
+
+				flowerCount: ->
+					@length
+
+			class Garden extends smackbone.Model
+				models:
+					flowers: Flowers
+
+				numberOfFlowers: ->
+					@get('flowers').flowerCount()
+
+			@collection.model = Garden
+
+			@collection.set [
+				id: 0
+				flowers: [
+					id: 10
+					name: 'rose'
+				,
+					id: 96
+					name: 'tulip'
+				]
+			]
+
+			garden = @collection.get(0)
+			garden.numberOfFlowers().should.equal 2

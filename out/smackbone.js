@@ -173,6 +173,7 @@
             }
           }
           current[name] = value;
+          this.length = Object.keys(current).length;
         }
       }
       for (_i = 0, _len = changedPropertyNames.length; _i < _len; _i++) {
@@ -251,12 +252,16 @@
   })(Smackbone.Event);
 
   Smackbone.Collection = (function(_super) {
+    var idAttribute;
+
     __extends(Collection, _super);
 
     function Collection() {
       _ref = Collection.__super__.constructor.apply(this, arguments);
       return _ref;
     }
+
+    idAttribute = 'id';
 
     Collection.prototype.add = function(object) {
       return this.set(object);
@@ -272,24 +277,55 @@
       }
     };
 
+    Collection.prototype._toModel = function(object) {
+      var klass, model, _ref1;
+      if (object instanceof Smackbone.Model) {
+        return object;
+      } else {
+        klass = (_ref1 = this.model) != null ? _ref1 : Smackbone.Model;
+        model = new klass(object);
+        model[idAttribute] = object.id;
+        model.cid = object.cid;
+        return model;
+      }
+    };
+
+    Collection.prototype._isExistingModel = function(object) {
+      var cid, existingModel, id;
+      id = object[idAttribute];
+      if (id != null) {
+        existingModel = this.get(id);
+      }
+      if (existingModel == null) {
+        cid = object['cid'];
+        if (cid != null) {
+          existingModel = this.get(cid);
+        }
+      }
+      return existingModel != null;
+    };
+
     Collection.prototype.set = function(objects) {
-      var id, idAttribute, model, object, _i, _len, _results;
+      var id, model, object, _i, _len, _results;
       if (_.isEmpty(objects)) {
         return;
       }
       objects = _.isArray(objects) ? objects : [objects];
-      idAttribute = 'id';
       _results = [];
       for (_i = 0, _len = objects.length; _i < _len; _i++) {
         object = objects[_i];
-        object._parent = this;
-        id = object[idAttribute];
-        if (id != null) {
-          _results.push(Collection.__super__.set.call(this, id, object));
+        if (!this._isExistingModel(object)) {
+          model = this._toModel(object);
         } else {
           model = object;
+        }
+        model._parent = this;
+        id = model[idAttribute];
+        if (id != null) {
+          _results.push(Collection.__super__.set.call(this, id, model));
+        } else {
           if (model.cid == null) {
-            throw "illegal";
+            throw "An object in a collection must have an id or cid attribute";
           }
           _results.push(Collection.__super__.set.call(this, model.cid, model));
         }
