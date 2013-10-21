@@ -10,7 +10,7 @@
 			@initialize? properties
 
 		toJSON: ->
-			@_properties
+			_.clone @_properties
 
 		isNew: ->
 			not @id?
@@ -31,7 +31,7 @@
 			@_previousProperties = _.clone @_properties
 			current = @_properties
 			previous = @_previousProperties
-			
+
 			changedPropertyNames = []
 			@changed = {}
 
@@ -47,7 +47,7 @@
 
 				if current[name]?.set?
 					current[name].set value
-				else 
+				else
 					if not current[name]?
 						modelClass = @models?[name]
 						if not modelClass? and _.isArray value
@@ -55,7 +55,7 @@
 
 						if modelClass?
 							value = new modelClass value
-	
+
 					if value instanceof Smackbone.Model
 						if not value._parent?
 							value._parent = @
@@ -109,3 +109,7 @@
 		each: (func) ->
 			for object, x of @_properties
 				func x
+
+		reset: ->
+			for key, value of @_properties
+				@unset key
