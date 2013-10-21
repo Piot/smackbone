@@ -24,11 +24,13 @@
 		_onSaveRequest: (path, model) =>
 			options = {}
 			options.type = if model.isNew() then 'POST' else 'PUT'
+			options.data = JSON.stringify model.toJSON()
 			options.done = (response) =>
 				model.set response
 			@_request options, path
 
 		_request: (options, path) ->
 			options.url = (@urlRoot ? '') + path
+			options.contentType = 'application/json'
 			@trigger 'request', options
 			Smackbone.$.ajax(options).done options.done
