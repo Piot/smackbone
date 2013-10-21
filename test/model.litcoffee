@@ -121,7 +121,7 @@
 				constructor: (options) ->
 					@x = options.x
 					@y = options.y
-				
+
 				toPositionString: ->
 					"#{@x}:#{@y}"
 
@@ -201,9 +201,8 @@
 			@model.unset 'sub'
 
 		it 'should report path for sub models', ->
-
 			subModel = new smackbone.Model
-			@model.set 
+			@model.set
 				sub: subModel
 
 			subModel.path().should.eql '/sub'
@@ -219,6 +218,10 @@
 				first: first
 
 			second.path().should.eql '/first/second'
+
+		it 'should report path for newly created models', ->
+			@model.path().should.eql ''
+
 
 		it 'should be possible to access submodels using attribute', ->
 			first = new smackbone.Model
@@ -291,3 +294,10 @@
 			garden = owner.gardens.get('2')
 			garden.should.be.instanceof Garden
 			garden.numberOfFlowers().should.equal 3
+
+		it 'should reset', ->
+			@model.set 'hello', 'world'
+			@model.get('hello').should.equal 'world'
+			@model.reset()
+			should.equal @model.get('hello'), undefined
+
