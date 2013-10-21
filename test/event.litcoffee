@@ -117,4 +117,9 @@
 			@event.trigger 'multiple'
 			@event.trigger 'not correct'
 			@event.trigger 'multiple'
-			count.should.equal(3) 
+			count.should.equal(3)
+
+		it 'should report error on undefined listeners', ->
+			(->
+				@event.on 'all', undefined
+			).should.throwError()
