@@ -15,7 +15,20 @@
 
 			returnedModel = @collection.get 2
 			should.equal returnedModel, undefined
-		
+
+		it 'should report path for newly added models', ->
+			model = new smackbone.Model
+			@collection.add model
+			model.path().should.eql '/'
+
+		it 'should report path for newly added model in a sub collection', ->
+			root = new smackbone.Model
+			car = new smackbone.Model
+			cars = new smackbone.Collection
+			cars.add car
+			root.set 'cars', cars
+			car.path().should.eql '/cars/'
+
 		it 'should update existing models', ->
 			vehicle = new smackbone.Model
 			vehicle.set 'wheels', @collection
@@ -59,7 +72,7 @@
 
 			root = new smackbone.Model
 				flowers: @collection
-			
+
 			@collection.add flower
 			flower.path().should.equal '/flowers/wallflower'
 
@@ -70,7 +83,7 @@
 
 			root = new smackbone.Model
 				flowers: @collection
-			
+
 			@collection.add flower
 			json = JSON.stringify root.toJSON()
 			json.should.equal '{"flowers":[{"id":"128","name":"tulip"}]}'
@@ -110,7 +123,7 @@
 
 			@collection.set data
 			@collection.get(4).priceWithTax().should.equal 150.0
-		
+
 		it 'should create models from hierarchy', ->
 
 			class Flower
@@ -161,5 +174,44 @@
 				@collection.get(model).should.equal model
 				done()
 
-			model = @collection.create 
+			model = @collection.create
 				name: 'ambulance'
+
+		it 'should check contains', ->
+			model = new smackbone.Model
+			@collection.contains(model).should.be.false
+			@collection.add model
+			@collection.contains(model).should.be.true
+
+		it 'should not overwrite sub models from collection model class', ->
+
+			class WrongClass extends smackbone.Model
+			class Position extends smackbone.Model
+				currentPosition: ->
+					p = 
+						x: @get('x')
+						y: @get('y')
+
+			class Light extends smackbone.Model
+
+			position = new Position
+				x: 10
+				y: 10
+
+			light = new Light
+				id: 1
+			light.set 'position', position
+
+			@collection.model = WrongClass
+			@collection.add light
+			@collection.set
+				id: 1
+				position:
+					x: 20
+					y: 20
+
+			fetchedLight = @collection.get(1)
+			fetchedPosition = fetchedLight.get('position')
+			fetchedPosition.should.be.instanceof Position
+			fetchedPosition.get('x').should.equal 20
+
