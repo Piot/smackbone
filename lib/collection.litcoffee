@@ -14,6 +14,9 @@
 			else
 				super object
 
+		contains: (key) ->
+			@get(key)?
+
 		_toModel: (object) ->
 			if object instanceof Smackbone.Model
 				object
