@@ -46,8 +46,11 @@
       if (this._events == null) {
         this._events = {};
       }
+      if (!_.isFunction(callback)) {
+        throw new Error('Must have a valid function callback');
+      }
       if (/\s/g.test(name)) {
-        throw Error('Illegal event name');
+        throw new Error('Illegal event name');
       }
       events = this._events[name] || (this._events[name] = []);
       events.push({
@@ -121,7 +124,7 @@
     }
 
     Model.prototype.toJSON = function() {
-      return this._properties;
+      return _.clone(this._properties);
     };
 
     Model.prototype.isNew = function() {
@@ -254,6 +257,17 @@
       return _results;
     };
 
+    Model.prototype.reset = function() {
+      var key, value, _ref, _results;
+      _ref = this._properties;
+      _results = [];
+      for (key in _ref) {
+        value = _ref[key];
+        _results.push(this.unset(key));
+      }
+      return _results;
+    };
+
     return Model;
 
   })(Smackbone.Event);
@@ -282,6 +296,10 @@
       } else {
         return Collection.__super__.get.call(this, object);
       }
+    };
+
+    Collection.prototype.contains = function(key) {
+      return this.get(key) != null;
     };
 
     Collection.prototype._toModel = function(object) {
@@ -407,6 +425,7 @@
         _this = this;
       options = {};
       options.type = model.isNew() ? 'POST' : 'PUT';
+      options.data = JSON.stringify(model.toJSON());
       options.done = function(response) {
         return model.set(response);
       };
@@ -416,6 +435,7 @@
     Syncer.prototype._request = function(options, path) {
       var _ref1;
       options.url = ((_ref1 = this.urlRoot) != null ? _ref1 : '') + path;
+      options.contentType = 'application/json';
       this.trigger('request', options);
       return Smackbone.$.ajax(options).done(options.done);
     };
