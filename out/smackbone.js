@@ -116,6 +116,7 @@
       var properties;
       this._properties = {};
       this.cid = _.uniqueId('m');
+      this.length = 0;
       properties = attributes != null ? attributes : {};
       this.set(properties);
       if (typeof this.initialize === "function") {
@@ -154,9 +155,6 @@
       this.changed = {};
       for (name in attributes) {
         value = attributes[name];
-        if (name === idAttribute) {
-          this[idAttribute] = value;
-        }
         if (current[name] !== value) {
           changedPropertyNames.push(name);
         }
@@ -183,6 +181,9 @@
             }
           }
           current[name] = value;
+          if (name === idAttribute) {
+            this[idAttribute] = value;
+          }
           this.length = _.keys(current).length;
         }
       }
@@ -203,8 +204,10 @@
 
     Model.prototype.unset = function(key) {
       var model;
+      console.log('delete key', key, ' from', this);
       model = this._properties[key];
       delete this._properties[key];
+      this.length = _.keys(this._properties).length;
       if (model != null) {
         if (typeof model.trigger === "function") {
           model.trigger('unset', model);

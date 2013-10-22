@@ -4,7 +4,7 @@
 		constructor: (attributes, options) ->
 			@_properties = {}
 			@cid = _.uniqueId 'm'
-
+			@length = 0
 			properties = attributes ? {}
 			@set properties
 			@initialize? properties
@@ -36,9 +36,6 @@
 			@changed = {}
 
 			for name, value of attributes
-				if name is idAttribute
-					@[idAttribute] = value
-
 				if current[name] isnt value
 					changedPropertyNames.push name
 
@@ -62,7 +59,10 @@
 							value.id = name
 							@[name] = value
 
+		
 					current[name] = value
+					if name is idAttribute
+						@[idAttribute] = value
 					@length = _.keys(current).length
 
 			for changeName in changedPropertyNames
@@ -77,8 +77,10 @@
 
 
 		unset: (key) ->
+			console.log 'delete key', key, ' from', @
 			model = @_properties[key]
 			delete @_properties[key]
+			@length = _.keys(@_properties).length
 			model?.trigger? 'unset', model
 			model?.trigger? 'remove', model
 

@@ -16,6 +16,38 @@
 			returnedModel = @collection.get 2
 			should.equal returnedModel, undefined
 
+		it 'should hold the right amount of models', ->
+			model = new smackbone.Model
+				id: 128
+				distance: 99.3
+
+			@collection.length.should.equal 0
+			@collection.add model
+			@collection.length.should.equal 1
+			returnedModel = @collection.get model
+			returnedModel.should.equal.model
+
+			@collection.set
+				id: 128
+				distance: 42.2
+
+			count = 0
+			@collection.each (distanceObject) ->
+				distanceObject.get('distance').should.equal 42.2
+				count += 1
+
+			count.should.equal 1
+
+			@collection.length.should.equal 1
+			returnedModel = @collection.get 128
+			returnedModel.should.equal.model
+			returnedModel.get('distance').should.equal 42.2
+
+			returnedModel = @collection.remove returnedModel
+			@collection.length.should.equal 0
+			returnedModel = @collection.get 128
+			should.equal returnedModel, undefined
+
 		it 'should report path for newly added models', ->
 			model = new smackbone.Model
 			@collection.add model
