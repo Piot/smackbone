@@ -273,6 +273,9 @@
 			garden.should.be.instanceof Garden
 			garden.numberOfFlowers().should.equal 3
 
+			dahlia = owner.get('gardens').get('2').get('flowers').get(4)
+			dahlia.get('name').should.equal 'dahlia'
+
 		it 'should be able to overwrite a property with another model', ->
 			first = new smackbone.Model
 				name: 'firstOne'
