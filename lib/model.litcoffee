@@ -7,15 +7,14 @@
 			@length = 0
 			@idAttribute = 'id'
 			@changed = {}
-			properties = attributes ? {}
-			@set properties
-			@initialize? properties
+			@set attributes if attributes?
+			@initialize? attributes
 
 		toJSON: ->
 			_.clone @_properties
 
 		isNew: ->
-			not @id?
+			not @[@idAttribute]?
 
 		clone: ->
 			new @constructor @_properties
@@ -70,8 +69,7 @@
 			for changeName in changedPropertyNames
 				@trigger "change:#{changeName}", @, current[changeName]
 
-			isChanged = changedPropertyNames.length > 0
-			@trigger 'change', @ if isChanged
+			@trigger 'change', @ if changedPropertyNames.length > 0
 
 		contains: (key) ->
 			@get(key)?
@@ -80,20 +78,13 @@
 			@set object
 
 		remove: (object) ->
-			if object.id?
-				@unset object.id
-			else
-				@unset object.cid
+			@unset object
 
 		get: (key) ->
-			if key.id?
-				key = key.id
-			else if key.cid?
-				key = key.cid
-
-			@_properties[key]
+			@_properties[key[@idAttribute] ? key.cid ? key]
 
 		unset: (key) ->
+			key = key[@idAttribute] ? key.cid ? key
 			model = @_properties[key]
 			delete @_properties[key]
 			@length = _.keys(@_properties).length
@@ -103,7 +94,7 @@
 		path: ->
 			if @_parent?
 				prefix = @_parent.path()
-				"#{prefix}/#{@id ? ''}"
+				"#{prefix}/#{@[@idAttribute] ? ''}"
 			else
 				@rootPath ? ''
 
