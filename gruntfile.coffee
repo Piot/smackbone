@@ -30,7 +30,7 @@ module.exports = (grunt) ->
 				files:
 					'out/smackbone.js': 'out/smackbone.litcoffee'
 
-	grunt.registerTask 'default', [
+	grunt.registerTask 'test', [
 		'concat'
 		'coffee'
 		'mochaTest'
