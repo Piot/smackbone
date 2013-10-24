@@ -44,3 +44,12 @@
 			@syncer.on 'request', (options) ->
 				done() if options.type is 'PUT' and options.url is ''
 			@root.save()
+
+		it 'should report destroy request', (done) ->
+			@root.id = 2
+			model = @root
+			@syncer.on 'request', (options) ->
+				done() if options.type is 'DELETE' and options.url is '' and model.isEmpty()
+
+			@root.destroy()
+
