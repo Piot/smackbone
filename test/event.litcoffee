@@ -10,6 +10,13 @@
 			@event.on 'something', (data) ->
 			@event._events.something.length.should.equal(1)
 
+		it 'should handle multiple names', (done) ->
+			@event.on 'first second', (name) ->
+				name.should.equal 'world'
+				done()
+
+			@event.trigger 'second', 'world'
+
 		it 'should fire events', (done) ->
 			@event.on 'something', (name) ->
 				name.should.equal 'world'
@@ -101,12 +108,6 @@
 			(->
 				event.trigger 'not_existing'
 			).should.not.throwError()
-
-		it 'should handle event names with spaces', ->
-			event = @event
-			(->
-				event.on 'spaces are bad for you', ->
-			).should.throwError 'Illegal event name'
 
 		it 'should handle multiple triggers', ->
 			count = 0

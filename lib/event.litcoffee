@@ -9,14 +9,16 @@
 			@_triggerEvents allEvents, name, args... if allEvents?
 			@
 
-		on: (name, callback) ->
+		on: (names, callback) ->
 			@_events ?= {}
 			throw new Error 'Must have a valid function callback' if not _.isFunction callback
 			throw new Error 'Illegal event name' if /\s/g.test name 
-			events = @_events[name] or @_events[name] = []
-			events.push
-				callback: callback
-				self: @
+			nameArray = names.split ' '
+			for name in nameArray
+				events = @_events[name] or @_events[name] = []
+				events.push
+					callback: callback
+					self: @
 			@
 
 		off: (name, callback) ->
