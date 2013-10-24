@@ -43,19 +43,12 @@
 
 				attributes = {}
 				for o in array
-					if @_requiresIdForMembers?
-						id = o[@idAttribute] ? o.cid
-						throw new Error 'In collection you must have a valid id or cid' if not id?
-						attributes[id] = o
-					else
-						_.extend attributes, o
-
+					_.extend attributes, o
 			else
 				(attributes = {})[key] = value
 
-			if not @_requiresIdForMembers?
-				if attributes[@idAttribute]?
-					@[@idAttribute] = attributes[@idAttribute]
+			if attributes[@idAttribute]?
+				@[@idAttribute] = attributes[@idAttribute]
 
 			@_previousProperties = _.clone @_properties
 			current = @_properties
@@ -88,8 +81,8 @@
 					if value instanceof Smackbone.Model
 						if not value._parent?
 							value._parent = @
-							if not @_requiresIdForMembers?
-								value[@idAttribute] = name
+							value[@idAttribute] = name
+
 						@trigger 'add', value, @
 
 			for changeName in changedPropertyNames
@@ -148,7 +141,13 @@
 
 		destroy: ->
 			@trigger 'destroy', @
+			if not @isNew()
+				@_root().trigger 'destroy_request', @path(), @
+			@_parent?.remove @
 
 		reset: ->
 			for key, value of @_properties
 				@unset key
+		
+		isEmpty: ->
+			@length is 0
