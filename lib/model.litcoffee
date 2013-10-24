@@ -21,31 +21,18 @@
 			new @constructor @_properties
 
 		_createModelFromName: (name, value) ->
-			modelClass = @models?[name]
-			if not modelClass?
-				modelClass = @model
-
+			modelClass = @models?[name] ? @model
 			if modelClass?
-				result = new modelClass value
+				new modelClass value
 			else
-				result = value
-			result
+				value
 
 		set: (key, value) ->
-			return if not key?
-
-			if not value?
-				return if _.isEmpty key
-				if _.isArray key
-					array = key
-				else
-					array = [key]
-
-				attributes = {}
-				for o in array
-					_.extend attributes, o
-			else
+			throw new Error 'can not set with undefined' if not key?
+			if value?
 				(attributes = {})[key] = value
+			else
+				attributes = key
 
 			if attributes[@idAttribute]?
 				@[@idAttribute] = attributes[@idAttribute]
@@ -64,26 +51,21 @@
 				if previous[name] isnt value
 					@changed[name] = value
 
-				if current[name]?.set?
-					if value instanceof Smackbone.Model
-						current[name] = value
-					else
-						existingObject = current[name]
-						existingObject.set value
+				if current[name]?.set? and not (value instanceof Smackbone.Model)
+					existingObject = current[name]
+					existingObject.set value
 				else
-					if not current[name]?
-						if not (value instanceof Smackbone.Model)
-							value = @_createModelFromName name, value
-
+					if not (value instanceof Smackbone.Model)
+						value = @_createModelFromName name, value
 					current[name] = value
 					@length = _.keys(current).length
 
-					if value instanceof Smackbone.Model
-						if not value._parent?
-							value._parent = @
+					if value instanceof Smackbone.Model and not value._parent?
+						value._parent = @
+						if not value[@idAttribute]?
 							value[@idAttribute] = name
 
-						@trigger 'add', value, @
+					@trigger 'add', value, @
 
 			for changeName in changedPropertyNames
 				@trigger "change:#{changeName}", @, current[changeName]
