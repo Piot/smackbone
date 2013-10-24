@@ -14,7 +14,6 @@
 			new Init
 				hello: 'world'
 
-
 		it 'should set properties using their name', ->
 			@model.set 'space', 'is big'
 			@model.get('space').should.equal 'is big'
@@ -45,7 +44,6 @@
 			@model.unset 'color'
 			should.equal @model.get('color'), undefined
 
-
 		it 'should fire change events', (done) ->
 			detectedChange = false
 
@@ -58,7 +56,6 @@
 
 			done 'did not fire' if not detectedChange
 
-
 		it 'should detect no change', (done) ->
 			constantData =
 				name: 'testing'
@@ -70,7 +67,6 @@
 			model.set constantData
 			done()
 
-
 		it 'should keep track of changed properties', ->
 			@model.changed.should.be.empty
 			@model.set
@@ -79,7 +75,6 @@
 			@model.set
 				something_else: 99
 			@model.changed.should.eql {something_else:99}
-
 
 		it 'should fire change for specific properties', (done) ->
 			shouldFireNow = false
@@ -98,7 +93,6 @@
 				wrong: 'something else'
 				something: 42
 
-
 		it 'should notify objects of change', (done) ->
 			position = new smackbone.Model
 				x: 42
@@ -115,15 +109,11 @@
 					x: -1
 					y: 100
 
-
 		it 'should create objects of correct type', ->
-			class VectorPosition
-				constructor: (options) ->
-					@x = options.x
-					@y = options.y
+			class VectorPosition extends smackbone.Model
 
 				toPositionString: ->
-					"#{@x}:#{@y}"
+					"#{@get('x')}:#{@get('y')}"
 
 			class Airplane extends smackbone.Model
 				models:
@@ -134,8 +124,9 @@
 					x: 422
 					y: -10
 
-			airplane.get('position').toPositionString().should.eql '422:-10'
-
+			position = airplane.get('position')
+			position.should.be.an.instanceof VectorPosition
+			position.toPositionString().should.eql '422:-10'
 
 		it 'should not replace models during data updates', (done) ->
 			subModel = new smackbone.Model
@@ -189,7 +180,6 @@
 			json = JSON.stringify @model.toJSON()
 			json.should.equal '{"car":{"age":{"years":99}}}'
 
-
 		it 'should fire unset when property is replaced', (done) ->
 			subModel = new smackbone.Model
 			@model.set
@@ -207,7 +197,7 @@
 
 			subModel.path().should.eql '/sub'
 
-		it 'should reoport path for multiple sub models', ->
+		it 'should report path for multiple sub models', ->
 			first = new smackbone.Model
 			second = new smackbone.Model
 
@@ -222,20 +212,8 @@
 		it 'should report path for newly created models', ->
 			@model.path().should.eql ''
 
-
-		it 'should be possible to access submodels using attribute', ->
-			first = new smackbone.Model
-			second = new smackbone.Model
-			second.set 'secret', 'pepper'
-
-			first.set
-				second: second
-
-			first.second.get('secret').should.eql 'pepper'
-
 		it 'should create models from hierarchy', ->
-
-			class Flower
+			class Flower extends smackbone.Model
 
 			class Flowers extends smackbone.Collection
 				model: Flower
@@ -284,14 +262,14 @@
 				]
 				name: 'peter'
 
-			gardens = owner.gardens
+			gardens = owner.get('gardens')
 			gardens.should.be.instanceof Gardens
 
-			garden = owner.gardens.get('-1')
+			garden = owner.get('gardens').get('-1')
 			garden.should.be.instanceof Garden
 			garden.numberOfFlowers().should.equal 2
 
-			garden = owner.gardens.get('2')
+			garden = owner.get('gardens').get('2')
 			garden.should.be.instanceof Garden
 			garden.numberOfFlowers().should.equal 3
 
@@ -300,4 +278,3 @@
 			@model.get('hello').should.equal 'world'
 			@model.reset()
 			should.equal @model.get('hello'), undefined
-

@@ -5,6 +5,8 @@
 			@_properties = {}
 			@cid = _.uniqueId 'm'
 			@length = 0
+			@idAttribute = 'id'
+			@changed = {}
 			properties = attributes ? {}
 			@set properties
 			@initialize? properties
@@ -16,17 +18,45 @@
 			not @id?
 
 		clone: ->
-      			new @constructor @_properties
+			new @constructor @_properties
+
+		_createModelFromName: (name, value) ->
+			modelClass = @models?[name]
+			if not modelClass?
+				modelClass = @model
+
+			if modelClass?
+				result = new modelClass value
+			else
+				result = value
+			result
 
 		set: (key, value) ->
 			return if not key?
 
-			idAttribute = 'id'
-			if typeof key is 'object'
-				attributes = key
-				options = value
+			if not value?
+				return if _.isEmpty key
+				if _.isArray key
+					array = key
+				else
+					array = [key]
+
+				attributes = {}
+				for o in array
+					if @_requiresIdForMembers?
+						id = o[@idAttribute] ? o.cid
+						throw new Error 'In collection you must have a valid id or cid' if not id?
+						# o._parent = @
+						attributes[id] = o
+					else
+						_.extend attributes, o
+
 			else
 				(attributes = {})[key] = value
+
+			if not @_requiresIdForMembers?
+				if attributes[@idAttribute]?
+					@[@idAttribute] = attributes[@idAttribute]
 
 			@_previousProperties = _.clone @_properties
 			current = @_properties
@@ -36,6 +66,7 @@
 			@changed = {}
 
 			for name, value of attributes
+				throw new Error 'key can not be object' if typeof name is 'object'
 				if current[name] isnt value
 					changedPropertyNames.push name
 
@@ -43,27 +74,25 @@
 					@changed[name] = value
 
 				if current[name]?.set?
-					current[name].set value
+					if value instanceof Smackbone.Model
+						current[name] = value
+					else
+						existingObject = current[name]
+						existingObject.set value
 				else
 					if not current[name]?
-						modelClass = @models?[name]
-						if not modelClass? and _.isArray value
-							modelClass = Smackbone.Collection
+						if not (value instanceof Smackbone.Model)
+							value = @_createModelFromName name, value
 
-						if modelClass?
-							value = new modelClass value
+					current[name] = value
+					@length = _.keys(current).length
 
 					if value instanceof Smackbone.Model
 						if not value._parent?
 							value._parent = @
-							value.id = name
-							@[name] = value
-
-		
-					current[name] = value
-					if name is idAttribute
-						@[idAttribute] = value
-					@length = _.keys(current).length
+							if not @_requiresIdForMembers?
+								value[@idAttribute] = name
+						@trigger 'add', value, @
 
 			for changeName in changedPropertyNames
 				@trigger "change:#{changeName}", @, current[changeName]
@@ -72,17 +101,32 @@
 			@trigger 'change', @ if isChanged
 			value
 
+		contains: (key) ->
+			@get(key)?
+
+		add: (object) ->
+			@set object
+
+		remove: (object) ->
+			if object.id?
+				@unset object.id
+			else
+				@unset object.cid
+
 		get: (key) ->
+			if key.id?
+				key = key.id
+			else if key.cid?
+				key = key.cid
+
 			@_properties[key]
 
-
 		unset: (key) ->
-			console.log 'delete key', key, ' from', @
 			model = @_properties[key]
 			delete @_properties[key]
 			@length = _.keys(@_properties).length
 			model?.trigger? 'unset', model
-			model?.trigger? 'remove', model
+			@trigger 'remove', model, @
 
 		path: ->
 			if @_parent?
@@ -107,10 +151,6 @@
 
 		destroy: ->
 			@trigger 'destroy', @
-
-		each: (func) ->
-			for object, x of @_properties
-				func x
 
 		reset: ->
 			for key, value of @_properties

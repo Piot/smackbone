@@ -10,7 +10,7 @@ module.exports = (grunt) ->
 					reporter: 'spec'
 					require: 'coffee-script'
 				
-				src: ['test/**/*.litcoffee']
+				src: ['test/*.litcoffee']
 
 		concat:
 			options:

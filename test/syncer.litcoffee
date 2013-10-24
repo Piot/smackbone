@@ -33,17 +33,14 @@
 					done 'wrong parameters in request'
 			car.save()
 
-
 		it 'should report fetch request', (done) ->
 			@root.id = 2
 			@syncer.on 'request', (options) ->
 				done() if options.type is 'GET' and options.url is ''
 			@root.fetch()
 
-
 		it 'should report save request (PUT)', (done) ->
 			@root.id = 2
 			@syncer.on 'request', (options) ->
 				done() if options.type is 'PUT' and options.url is ''
 			@root.save()
-
