@@ -4,7 +4,7 @@
 		_ = require 'underscore'
 		Smackbone.$ =
 			done: (func) ->
-				func()
+				func {}
 
 			ajax: (options) ->
 				# console.log "method:#{options.type} url:#{options.url}"
