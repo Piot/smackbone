@@ -46,7 +46,6 @@
 					if @_requiresIdForMembers?
 						id = o[@idAttribute] ? o.cid
 						throw new Error 'In collection you must have a valid id or cid' if not id?
-						# o._parent = @
 						attributes[id] = o
 					else
 						_.extend attributes, o
@@ -66,7 +65,6 @@
 			@changed = {}
 
 			for name, value of attributes
-				throw new Error 'key can not be object' if typeof name is 'object'
 				if current[name] isnt value
 					changedPropertyNames.push name
 
@@ -99,7 +97,6 @@
 
 			isChanged = changedPropertyNames.length > 0
 			@trigger 'change', @ if isChanged
-			value
 
 		contains: (key) ->
 			@get(key)?

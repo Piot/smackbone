@@ -273,6 +273,19 @@
 			garden.should.be.instanceof Garden
 			garden.numberOfFlowers().should.equal 3
 
+		it 'should be able to overwrite a property with another model', ->
+			first = new smackbone.Model
+				name: 'firstOne'
+			@model.set 'object', first
+			@model.get('object').should.equal first
+
+			second = new smackbone.Model
+				speed: 33
+
+			@model.set 'object', second
+			@model.get('object').should.equal second
+
+
 		it 'should reset', ->
 			@model.set 'hello', 'world'
 			@model.get('hello').should.equal 'world'

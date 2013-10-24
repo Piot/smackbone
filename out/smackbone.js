@@ -193,9 +193,6 @@
       this.changed = {};
       for (name in attributes) {
         value = attributes[name];
-        if (typeof name === 'object') {
-          throw new Error('key can not be object');
-        }
         if (current[name] !== value) {
           changedPropertyNames.push(name);
         }
@@ -234,9 +231,8 @@
       }
       isChanged = changedPropertyNames.length > 0;
       if (isChanged) {
-        this.trigger('change', this);
+        return this.trigger('change', this);
       }
-      return value;
     };
 
     Model.prototype.contains = function(key) {
