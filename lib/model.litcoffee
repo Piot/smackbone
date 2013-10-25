@@ -8,6 +8,10 @@
 			@idAttribute = 'id'
 			@changed = {}
 			@set attributes if attributes?
+			if @models?
+				for key, modelClass of @models
+					if not @contains key
+						@set key, new modelClass {}
 			@initialize? attributes
 
 		toJSON: ->
@@ -103,9 +107,9 @@
 				model = model._parent
 			model
 
-		fetch: ->
-			@_root().trigger 'fetch_request', @path(), @
-			@trigger 'fetch', @
+		fetch: (queryObject) ->
+			@_root().trigger 'fetch_request', @path(), @, queryObject
+			@trigger 'fetch', @, queryObject
 
 		save: ->
 			@_root().trigger 'save_request', @path(), @
@@ -120,6 +124,6 @@
 		reset: ->
 			for key, value of @_properties
 				@unset key
-		
+
 		isEmpty: ->
 			@length is 0

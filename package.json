@@ -16,8 +16,10 @@
 	},
 	"devDependencies": {
 		"mocha":  "",
+		"coffee-script": "",
 		"should": "",
 		"grunt": "",
+		"grunt-cli": "",
 		"grunt-mocha-test": "",
 		"grunt-contrib-coffee": "",
 		"grunt-contrib-concat": ""

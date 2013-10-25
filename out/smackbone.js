@@ -116,6 +116,7 @@
     __extends(Model, _super);
 
     function Model(attributes, options) {
+      var key, modelClass, _ref;
       this._properties = {};
       this.cid = _.uniqueId('m');
       this.length = 0;
@@ -123,6 +124,15 @@
       this.changed = {};
       if (attributes != null) {
         this.set(attributes);
+      }
+      if (this.models != null) {
+        _ref = this.models;
+        for (key in _ref) {
+          modelClass = _ref[key];
+          if (!this.contains(key)) {
+            this.set(key, new modelClass({}));
+          }
+        }
       }
       if (typeof this.initialize === "function") {
         this.initialize(attributes);
@@ -253,9 +263,9 @@
       return model;
     };
 
-    Model.prototype.fetch = function() {
-      this._root().trigger('fetch_request', this.path(), this);
-      return this.trigger('fetch', this);
+    Model.prototype.fetch = function(queryObject) {
+      this._root().trigger('fetch_request', this.path(), this, queryObject);
+      return this.trigger('fetch', this, queryObject);
     };
 
     Model.prototype.save = function() {
@@ -369,7 +379,7 @@
       this.root.on('destroy_request', this._onDestroyRequest);
     }
 
-    Syncer.prototype._onFetchRequest = function(path, model) {
+    Syncer.prototype._onFetchRequest = function(path, model, queryObject) {
       var options,
         _this = this;
       options = {};
@@ -377,7 +387,7 @@
       options.done = function(response) {
         return model.set(response);
       };
-      return this._request(options, path);
+      return this._request(options, path, queryObject);
     };
 
     Syncer.prototype._onSaveRequest = function(path, model) {
@@ -404,9 +414,24 @@
       return this._request(options, path);
     };
 
-    Syncer.prototype._request = function(options, path) {
-      var _ref1, _ref2;
-      options.url = ((_ref1 = this.urlRoot) != null ? _ref1 : '') + path;
+    Syncer.prototype._encodeQueryObject = function(queryObject) {
+      var array, key, value;
+      array = [];
+      for (key in queryObject) {
+        value = queryObject[key];
+        array.push("" + key + "=" + value);
+      }
+      if (array.length) {
+        return encodeURI('?' + array.join('&'));
+      } else {
+        return '';
+      }
+    };
+
+    Syncer.prototype._request = function(options, path, queryObject) {
+      var queryString, _ref1, _ref2;
+      queryString = this._encodeQueryObject(queryObject);
+      options.url = ((_ref1 = this.urlRoot) != null ? _ref1 : '') + path + queryString;
       options.data = JSON.stringify((_ref2 = options.data) != null ? _ref2.toJSON() : void 0);
       options.contentType = 'application/json';
       this.trigger('request', options);

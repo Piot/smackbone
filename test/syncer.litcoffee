@@ -39,6 +39,14 @@
 				done() if options.type is 'GET' and options.url is ''
 			@root.fetch()
 
+		it 'should report fetch request with query object', (done) ->
+			@root.id = 2
+			@syncer.on 'request', (options) ->
+				done() if options.type is 'GET' and options.url is '?secret=1442'
+			@root.fetch
+				secret: '1442'
+
+
 		it 'should report save request (PUT)', (done) ->
 			@root.id = 2
 			@syncer.on 'request', (options) ->
