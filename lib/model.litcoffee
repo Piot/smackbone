@@ -32,10 +32,11 @@
 
 		set: (key, value) ->
 			throw new Error 'can not set with undefined' if not key?
-			if value?
-				(attributes = {})[key] = value
-			else
+
+			if typeof key is 'object'
 				attributes = key
+			else
+				(attributes = {})[key] = value
 
 			if attributes[@idAttribute]?
 				@[@idAttribute] = attributes[@idAttribute]
@@ -54,7 +55,7 @@
 				if previous[name] isnt value
 					@changed[name] = value
 
-				if current[name]?.set? and not (value instanceof Smackbone.Model)
+				if current[name]?.set? and not (value instanceof Smackbone.Model) and value?
 					existingObject = current[name]
 					existingObject.set value
 				else
@@ -121,9 +122,11 @@
 				@_root().trigger 'destroy_request', @path(), @
 			@_parent?.remove @
 
-		reset: ->
+		reset: (a, b) ->
 			for key, value of @_properties
 				@unset key
+
+			@set a, b if a?
 
 		isEmpty: ->
 			@length is 0

@@ -166,10 +166,10 @@
       if (key == null) {
         throw new Error('can not set with undefined');
       }
-      if (value != null) {
-        (attributes = {})[key] = value;
-      } else {
+      if (typeof key === 'object') {
         attributes = key;
+      } else {
+        (attributes = {})[key] = value;
       }
       if (attributes[this.idAttribute] != null) {
         this[this.idAttribute] = attributes[this.idAttribute];
@@ -187,7 +187,7 @@
         if (previous[name] !== value) {
           this.changed[name] = value;
         }
-        if ((((_ref = current[name]) != null ? _ref.set : void 0) != null) && !(value instanceof Smackbone.Model)) {
+        if ((((_ref = current[name]) != null ? _ref.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {
           existingObject = current[name];
           existingObject.set(value);
         } else {
@@ -282,15 +282,16 @@
       return (_ref = this._parent) != null ? _ref.remove(this) : void 0;
     };
 
-    Model.prototype.reset = function() {
-      var key, value, _ref, _results;
+    Model.prototype.reset = function(a, b) {
+      var key, value, _ref;
       _ref = this._properties;
-      _results = [];
       for (key in _ref) {
         value = _ref[key];
-        _results.push(this.unset(key));
+        this.unset(key);
       }
-      return _results;
+      if (a != null) {
+        return this.set(a, b);
+      }
     };
 
     Model.prototype.isEmpty = function() {

@@ -288,9 +288,32 @@
 			@model.set 'object', second
 			@model.get('object').should.equal second
 
-
 		it 'should reset', ->
 			@model.set 'hello', 'world'
 			@model.get('hello').should.equal 'world'
 			@model.reset()
 			should.equal @model.get('hello'), undefined
+
+		it 'should reset with values', ->
+			@model.set 'hello', 'world'
+			@model.get('hello').should.equal 'world'
+			@model.reset
+				hello: 'new value'
+			@model.get('hello').should.equal 'new value'
+
+		it 'should detect change', (done) ->
+			count = 0
+			@model.on 'change:rabbit', (model) ->
+				count += 1
+				if count is 2
+					should.equal model.get('rabbit'), null
+					done()
+
+			model = new smackbone.Model
+			@model.set 'rabbit', model
+			@model.set 'rabbit', null
+
+		it 'should handle setting undefined', ->
+			@model.set 'rabbit', 2
+			@model.set 'rabbit', undefined
+			should.equal @model.get 'rabbit', undefined
