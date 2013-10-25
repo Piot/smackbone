@@ -318,3 +318,11 @@
 			@model.set 'rabbit', undefined
 			should.equal @model.get 'rabbit', undefined
 			
+		it 'can return sub models from path', ->
+			@model.set
+				desk:
+					computer:
+						monitor:
+							size: '24 inch'
+			@model.get('desk/computer/monitor/size').should.equal '24 inch'
+			

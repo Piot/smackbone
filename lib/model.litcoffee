@@ -92,7 +92,17 @@
 
 		get: (key) ->
 			throw new Error 'Must have a valid object for get()' if not key?
-			@_properties[key[@idAttribute] ? key.cid ? key]
+			if typeof key is 'string'
+				parts = key.split '/'
+				model = @
+				for id in parts
+					if model instanceof Smackbone.Model
+						model = model._properties[id]
+					else
+						model = model[id]
+				model	
+			else
+				@_properties[key[@idAttribute] ? key.cid ? key]
 
 		unset: (key) ->
 			key = key[@idAttribute] ? key.cid ? key

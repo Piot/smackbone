@@ -278,3 +278,13 @@
 			should.equal @collection.get(cid), undefined
 			@collection.get(model.id).should.equal model
 			model.id?.should.be.ok	
+
+		it 'can return sub models from path', ->
+			car = new smackbone.Model
+				id: 256
+				make: 'sportscar'
+			collection = new smackbone.Collection
+			collection.add car
+			@collection.set 'cars', collection
+			@collection.get("cars/#{car.id}/make").should.be.equal 'sportscar'
+			@collection.get('cars').should.be.equal collection

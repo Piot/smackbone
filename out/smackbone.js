@@ -242,11 +242,25 @@
     };
 
     Model.prototype.get = function(key) {
-      var _ref, _ref1;
+      var id, model, parts, _i, _len, _ref, _ref1;
       if (key == null) {
         throw new Error('Must have a valid object for get()');
       }
-      return this._properties[(_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key];
+      if (typeof key === 'string') {
+        parts = key.split('/');
+        model = this;
+        for (_i = 0, _len = parts.length; _i < _len; _i++) {
+          id = parts[_i];
+          if (model instanceof Smackbone.Model) {
+            model = model._properties[id];
+          } else {
+            model = model[id];
+          }
+        }
+        return model;
+      } else {
+        return this._properties[(_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key];
+      }
     };
 
     Model.prototype.unset = function(key) {
