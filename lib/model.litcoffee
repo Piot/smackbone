@@ -93,8 +93,7 @@
 
 		path: ->
 			if @_parent?
-				prefix = @_parent.path()
-				"#{prefix}/#{@[@idAttribute] ? ''}"
+				"#{@_parent.path()}/#{@[@idAttribute] ? ''}"
 			else
 				@rootPath ? ''
 

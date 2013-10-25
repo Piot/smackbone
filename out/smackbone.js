@@ -1,5 +1,5 @@
 (function() {
-  var Smackbone, root, _,
+  var Smackbone, root, _, _ref,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -10,7 +10,7 @@
     _ = require('underscore');
     Smackbone.$ = {
       done: function(func) {
-        return func();
+        return func({});
       },
       ajax: function(options) {
         return this;
@@ -40,8 +40,8 @@
       return this;
     };
 
-    Event.prototype.on = function(name, callback) {
-      var events;
+    Event.prototype.on = function(names, callback) {
+      var events, name, nameArray, _i, _len;
       if (this._events == null) {
         this._events = {};
       }
@@ -51,11 +51,15 @@
       if (/\s/g.test(name)) {
         throw new Error('Illegal event name');
       }
-      events = this._events[name] || (this._events[name] = []);
-      events.push({
-        callback: callback,
-        self: this
-      });
+      nameArray = names.split(' ');
+      for (_i = 0, _len = nameArray.length; _i < _len; _i++) {
+        name = nameArray[_i];
+        events = this._events[name] || (this._events[name] = []);
+        events.push({
+          callback: callback,
+          self: this
+        });
+      }
       return this;
     };
 
@@ -112,16 +116,16 @@
     __extends(Model, _super);
 
     function Model(attributes, options) {
-      var properties;
       this._properties = {};
       this.cid = _.uniqueId('m');
       this.length = 0;
       this.idAttribute = 'id';
       this.changed = {};
-      properties = attributes != null ? attributes : {};
-      this.set(properties);
+      if (attributes != null) {
+        this.set(attributes);
+      }
       if (typeof this.initialize === "function") {
-        this.initialize(properties);
+        this.initialize(attributes);
       }
     }
 
@@ -130,7 +134,7 @@
     };
 
     Model.prototype.isNew = function() {
-      return this.id == null;
+      return this[this.idAttribute] == null;
     };
 
     Model.prototype.clone = function() {
@@ -138,53 +142,27 @@
     };
 
     Model.prototype._createModelFromName = function(name, value) {
-      var modelClass, result, _ref;
-      modelClass = (_ref = this.models) != null ? _ref[name] : void 0;
-      if (modelClass == null) {
-        modelClass = this.model;
-      }
+      var modelClass, _ref, _ref1;
+      modelClass = (_ref = (_ref1 = this.models) != null ? _ref1[name] : void 0) != null ? _ref : this.model;
       if (modelClass != null) {
-        result = new modelClass(value);
+        return new modelClass(value);
       } else {
-        result = value;
+        return value;
       }
-      return result;
     };
 
     Model.prototype.set = function(key, value) {
-      var array, attributes, changeName, changedPropertyNames, current, existingObject, id, isChanged, name, o, previous, _i, _j, _len, _len1, _ref, _ref1;
+      var attributes, changeName, changedPropertyNames, current, existingObject, name, previous, _i, _len, _ref;
       if (key == null) {
-        return;
+        throw new Error('can not set with undefined');
       }
-      if (value == null) {
-        if (_.isEmpty(key)) {
-          return;
-        }
-        if (_.isArray(key)) {
-          array = key;
-        } else {
-          array = [key];
-        }
-        attributes = {};
-        for (_i = 0, _len = array.length; _i < _len; _i++) {
-          o = array[_i];
-          if (this._requiresIdForMembers != null) {
-            id = (_ref = o[this.idAttribute]) != null ? _ref : o.cid;
-            if (id == null) {
-              throw new Error('In collection you must have a valid id or cid');
-            }
-            attributes[id] = o;
-          } else {
-            _.extend(attributes, o);
-          }
-        }
-      } else {
+      if (value != null) {
         (attributes = {})[key] = value;
+      } else {
+        attributes = key;
       }
-      if (this._requiresIdForMembers == null) {
-        if (attributes[this.idAttribute] != null) {
-          this[this.idAttribute] = attributes[this.idAttribute];
-        }
+      if (attributes[this.idAttribute] != null) {
+        this[this.idAttribute] = attributes[this.idAttribute];
       }
       this._previousProperties = _.clone(this._properties);
       current = this._properties;
@@ -199,38 +177,29 @@
         if (previous[name] !== value) {
           this.changed[name] = value;
         }
-        if (((_ref1 = current[name]) != null ? _ref1.set : void 0) != null) {
-          if (value instanceof Smackbone.Model) {
-            current[name] = value;
-          } else {
-            existingObject = current[name];
-            existingObject.set(value);
-          }
+        if ((((_ref = current[name]) != null ? _ref.set : void 0) != null) && !(value instanceof Smackbone.Model)) {
+          existingObject = current[name];
+          existingObject.set(value);
         } else {
-          if (current[name] == null) {
-            if (!(value instanceof Smackbone.Model)) {
-              value = this._createModelFromName(name, value);
-            }
+          if (!(value instanceof Smackbone.Model)) {
+            value = this._createModelFromName(name, value);
           }
           current[name] = value;
           this.length = _.keys(current).length;
-          if (value instanceof Smackbone.Model) {
-            if (value._parent == null) {
-              value._parent = this;
-              if (this._requiresIdForMembers == null) {
-                value[this.idAttribute] = name;
-              }
+          if (value instanceof Smackbone.Model && (value._parent == null)) {
+            value._parent = this;
+            if (value[this.idAttribute] == null) {
+              value[this.idAttribute] = name;
             }
-            this.trigger('add', value, this);
           }
+          this.trigger('add', value, this);
         }
       }
-      for (_j = 0, _len1 = changedPropertyNames.length; _j < _len1; _j++) {
-        changeName = changedPropertyNames[_j];
+      for (_i = 0, _len = changedPropertyNames.length; _i < _len; _i++) {
+        changeName = changedPropertyNames[_i];
         this.trigger("change:" + changeName, this, current[changeName]);
       }
-      isChanged = changedPropertyNames.length > 0;
-      if (isChanged) {
+      if (changedPropertyNames.length > 0) {
         return this.trigger('change', this);
       }
     };
@@ -244,24 +213,17 @@
     };
 
     Model.prototype.remove = function(object) {
-      if (object.id != null) {
-        return this.unset(object.id);
-      } else {
-        return this.unset(object.cid);
-      }
+      return this.unset(object);
     };
 
     Model.prototype.get = function(key) {
-      if (key.id != null) {
-        key = key.id;
-      } else if (key.cid != null) {
-        key = key.cid;
-      }
-      return this._properties[key];
+      var _ref, _ref1;
+      return this._properties[(_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key];
     };
 
     Model.prototype.unset = function(key) {
-      var model;
+      var model, _ref, _ref1;
+      key = (_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key;
       model = this._properties[key];
       delete this._properties[key];
       this.length = _.keys(this._properties).length;
@@ -274,10 +236,9 @@
     };
 
     Model.prototype.path = function() {
-      var prefix, _ref, _ref1;
+      var _ref, _ref1;
       if (this._parent != null) {
-        prefix = this._parent.path();
-        return "" + prefix + "/" + ((_ref = this.id) != null ? _ref : '');
+        return "" + (this._parent.path()) + "/" + ((_ref = this[this.idAttribute]) != null ? _ref : '');
       } else {
         return (_ref1 = this.rootPath) != null ? _ref1 : '';
       }
@@ -303,7 +264,12 @@
     };
 
     Model.prototype.destroy = function() {
-      return this.trigger('destroy', this);
+      var _ref;
+      this.trigger('destroy', this);
+      if (!this.isNew()) {
+        this._root().trigger('destroy_request', this.path(), this);
+      }
+      return (_ref = this._parent) != null ? _ref.remove(this) : void 0;
     };
 
     Model.prototype.reset = function() {
@@ -317,6 +283,10 @@
       return _results;
     };
 
+    Model.prototype.isEmpty = function() {
+      return this.length === 0;
+    };
+
     return Model;
 
   })(Smackbone.Event);
@@ -325,10 +295,8 @@
     __extends(Collection, _super);
 
     function Collection() {
-      var args;
-      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      this._requiresIdForMembers = true;
-      Collection.__super__.constructor.apply(this, args);
+      _ref = Collection.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
     Collection.prototype.create = function(object) {
@@ -339,12 +307,42 @@
       return model;
     };
 
+    Collection.prototype.set = function(key, value) {
+      var array, attributes, id, o, _i, _len, _ref1;
+      attributes = {};
+      if (value != null) {
+        (attributes = {})[key] = value;
+      } else {
+        if (_.isEmpty(key)) {
+          return;
+        }
+        if (_.isArray(key)) {
+          array = key;
+        } else {
+          array = [key];
+        }
+        for (_i = 0, _len = array.length; _i < _len; _i++) {
+          o = array[_i];
+          id = (_ref1 = o[this.idAttribute]) != null ? _ref1 : o.cid;
+          if (id == null) {
+            throw new Error('In collection you must have a valid id or cid');
+          }
+          if (o._parent == null) {
+            o._parent = this;
+          }
+          attributes[id] = o;
+        }
+      }
+      delete attributes[this.idAttribute];
+      return Collection.__super__.set.call(this, attributes);
+    };
+
     Collection.prototype.each = function(func) {
-      var object, x, _ref, _results;
-      _ref = this._properties;
+      var object, x, _ref1, _results;
+      _ref1 = this._properties;
       _results = [];
-      for (object in _ref) {
-        x = _ref[object];
+      for (object in _ref1) {
+        x = _ref1[object];
         _results.push(func(x));
       }
       return _results;
@@ -362,35 +360,24 @@
     __extends(Syncer, _super);
 
     function Syncer(options) {
+      this._onDestroyRequest = __bind(this._onDestroyRequest, this);
       this._onSaveRequest = __bind(this._onSaveRequest, this);
       this._onFetchRequest = __bind(this._onFetchRequest, this);
       this.root = options.model;
       this.root.on('fetch_request', this._onFetchRequest);
       this.root.on('save_request', this._onSaveRequest);
+      this.root.on('destroy_request', this._onDestroyRequest);
     }
 
-    Syncer.prototype._onFetchRequest = function(path) {
+    Syncer.prototype._onFetchRequest = function(path, model) {
       var options,
         _this = this;
       options = {};
       options.type = 'GET';
       options.done = function(response) {
-        var model;
-        model = _this._findModel(path);
         return model.set(response);
       };
       return this._request(options, path);
-    };
-
-    Syncer.prototype._findModel = function(path) {
-      var model, part, parts, _i, _len;
-      parts = (path.split('/')).slice(1);
-      model = this.root;
-      for (_i = 0, _len = parts.length; _i < _len; _i++) {
-        part = parts[_i];
-        model = model.get(part);
-      }
-      return model;
     };
 
     Syncer.prototype._onSaveRequest = function(path, model) {
@@ -398,16 +385,29 @@
         _this = this;
       options = {};
       options.type = model.isNew() ? 'POST' : 'PUT';
-      options.data = JSON.stringify(model.toJSON());
+      options.data = model;
       options.done = function(response) {
         return model.set(response);
       };
       return this._request(options, path);
     };
 
+    Syncer.prototype._onDestroyRequest = function(path, model) {
+      var options,
+        _this = this;
+      options = {};
+      options.type = 'DELETE';
+      options.data = model;
+      options.done = function(response) {
+        return model.reset();
+      };
+      return this._request(options, path);
+    };
+
     Syncer.prototype._request = function(options, path) {
-      var _ref;
-      options.url = ((_ref = this.urlRoot) != null ? _ref : '') + path;
+      var _ref1, _ref2;
+      options.url = ((_ref1 = this.urlRoot) != null ? _ref1 : '') + path;
+      options.data = JSON.stringify((_ref2 = options.data) != null ? _ref2.toJSON() : void 0);
       options.contentType = 'application/json';
       this.trigger('request', options);
       return Smackbone.$.ajax(options).done(options.done);
