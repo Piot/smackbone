@@ -25,10 +25,7 @@
 
 		_createModelFromName: (name, value) ->
 			modelClass = @models?[name] ? @model
-			if modelClass?
-				new modelClass value
-			else
-				value
+			if modelClass? then new modelClass value else value
 
 		move: (currentId, nextId) ->
 			o = @get currentId
@@ -106,10 +103,7 @@
 			@trigger 'remove', model, @
 
 		path: ->
-			if @_parent?
-				"#{@_parent.path()}/#{@[@idAttribute] ? ''}"
-			else
-				@rootPath ? ''
+			if @_parent? then "#{@_parent.path()}/#{@[@idAttribute] ? ''}" else @rootPath ? ''
 
 		_root: ->
 			model = @
@@ -132,9 +126,7 @@
 			@_parent?.remove @
 
 		reset: (a, b) ->
-			for key, value of @_properties
-				@unset key
-
+			@unset key for key, value of @_properties
 			@set a, b if a?
 
 		isEmpty: ->

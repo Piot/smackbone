@@ -8,37 +8,31 @@
 			@root.on 'destroy_request', @_onDestroyRequest
 
 		_onFetchRequest: (path, model, queryObject) =>
-			options = {}
-			options.type = 'GET'
-			options.done = (response) =>
-				model.set response
+			options = 
+				type: 'GET'
+				done: (response) =>
+					model.set response
 			@_request options, path, queryObject
 
 		_onSaveRequest: (path, model) =>
-			options = {}
-			options.type = if model.isNew() then 'POST' else 'PUT'
-			options.data = model
-			options.done = (response) =>
-				model.set response
+			options =
+				type: if model.isNew() then 'POST' else 'PUT'
+				data: model
+				done: (response) =>
+					model.set response
 			@_request options, path
 
 		_onDestroyRequest: (path, model) =>
-			options = {}
-			options.type = 'DELETE'
-			options.data = model
-			options.done = (response) =>
-				model.reset()
+			options =
+				type: 'DELETE'
+				data: model
+				done: (response) =>
+					model.reset()
 			@_request options, path
 
 		_encodeQueryObject: (queryObject) ->
-			array = []
-			for key, value of queryObject
-				array.push "#{key}=#{value}"
-
-			if array.length
-				encodeURI('?' + array.join('&'))
-			else
-				''
+			array = ("#{key}=#{value}" for key, value of queryObject)
+			if array.length then encodeURI('?' + array.join('&')) else ''
 
 		_request: (options, path, queryObject) ->
 			queryString = @_encodeQueryObject queryObject

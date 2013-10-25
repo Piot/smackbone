@@ -338,18 +338,11 @@
 
     Collection.prototype.set = function(key, value) {
       var array, attributes, id, o, _i, _len, _ref1;
-      attributes = {};
       if (value != null) {
         (attributes = {})[key] = value;
       } else {
-        if (_.isEmpty(key)) {
-          return;
-        }
-        if (_.isArray(key)) {
-          array = key;
-        } else {
-          array = [key];
-        }
+        array = _.isArray(key) ? array = key : array = [key];
+        attributes = {};
         for (_i = 0, _len = array.length; _i < _len; _i++) {
           o = array[_i];
           id = (_ref1 = o[this.idAttribute]) != null ? _ref1 : o.cid;
@@ -362,17 +355,16 @@
           attributes[id] = o;
         }
       }
-      delete attributes[this.idAttribute];
       return Collection.__super__.set.call(this, attributes);
     };
 
     Collection.prototype.each = function(func) {
-      var object, x, _ref1, _results;
+      var key, value, _ref1, _results;
       _ref1 = this._properties;
       _results = [];
-      for (object in _ref1) {
-        x = _ref1[object];
-        _results.push(func(x));
+      for (key in _ref1) {
+        value = _ref1[key];
+        _results.push(func(value));
       }
       return _results;
     };
@@ -401,10 +393,11 @@
     Syncer.prototype._onFetchRequest = function(path, model, queryObject) {
       var options,
         _this = this;
-      options = {};
-      options.type = 'GET';
-      options.done = function(response) {
-        return model.set(response);
+      options = {
+        type: 'GET',
+        done: function(response) {
+          return model.set(response);
+        }
       };
       return this._request(options, path, queryObject);
     };
@@ -412,11 +405,12 @@
     Syncer.prototype._onSaveRequest = function(path, model) {
       var options,
         _this = this;
-      options = {};
-      options.type = model.isNew() ? 'POST' : 'PUT';
-      options.data = model;
-      options.done = function(response) {
-        return model.set(response);
+      options = {
+        type: model.isNew() ? 'POST' : 'PUT',
+        data: model,
+        done: function(response) {
+          return model.set(response);
+        }
       };
       return this._request(options, path);
     };
@@ -424,22 +418,27 @@
     Syncer.prototype._onDestroyRequest = function(path, model) {
       var options,
         _this = this;
-      options = {};
-      options.type = 'DELETE';
-      options.data = model;
-      options.done = function(response) {
-        return model.reset();
+      options = {
+        type: 'DELETE',
+        data: model,
+        done: function(response) {
+          return model.reset();
+        }
       };
       return this._request(options, path);
     };
 
     Syncer.prototype._encodeQueryObject = function(queryObject) {
       var array, key, value;
-      array = [];
-      for (key in queryObject) {
-        value = queryObject[key];
-        array.push("" + key + "=" + value);
-      }
+      array = (function() {
+        var _results;
+        _results = [];
+        for (key in queryObject) {
+          value = queryObject[key];
+          _results.push("" + key + "=" + value);
+        }
+        return _results;
+      })();
       if (array.length) {
         return encodeURI('?' + array.join('&'));
       } else {

@@ -317,3 +317,4 @@
 			@model.set 'rabbit', 2
 			@model.set 'rabbit', undefined
 			should.equal @model.get 'rabbit', undefined
+			
