@@ -30,6 +30,12 @@
 			else
 				value
 
+		move: (currentId, nextId) ->
+			o = @get currentId
+			throw new "Id '#{currentId}' didn't exist." if not o?
+			@unset currentId
+			@set nextId, o
+
 		set: (key, value) ->
 			throw new Error 'can not set with undefined' if not key?
 
@@ -40,6 +46,8 @@
 
 			if attributes[@idAttribute]?
 				@[@idAttribute] = attributes[@idAttribute]
+				if not @_properties[@idAttribute]
+					@_parent?.move @cid, @id
 
 			@_previousProperties = _.clone @_properties
 			current = @_properties
@@ -86,6 +94,7 @@
 			@unset object
 
 		get: (key) ->
+			throw new Error 'Must have a valid object for get()' if not key?
 			@_properties[key[@idAttribute] ? key.cid ? key]
 
 		unset: (key) ->

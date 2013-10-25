@@ -262,3 +262,19 @@
 			fetchedPosition = fetchedLight.get('position')
 			fetchedPosition.should.be.instanceof Position
 			fetchedPosition.get('x').should.equal 20
+
+		#it 'should possible to add simple object without id to collection', ->
+		#	added = @collection.add
+		#		test: 42
+		#		name: 'something'
+
+		it 'should save with only one id in collection', ->	
+			model = new smackbone.Model
+			cid = model.cid
+			@collection.add model
+			@collection.get(cid).should.equal model
+			model.set
+				id: 4
+			should.equal @collection.get(cid), undefined
+			@collection.get(model.id).should.equal model
+			model.id?.should.be.ok	

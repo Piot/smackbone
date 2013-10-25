@@ -161,8 +161,18 @@
       }
     };
 
+    Model.prototype.move = function(currentId, nextId) {
+      var o;
+      o = this.get(currentId);
+      if (o == null) {
+        throw new ("Id '" + currentId + "' didn't exist.");
+      }
+      this.unset(currentId);
+      return this.set(nextId, o);
+    };
+
     Model.prototype.set = function(key, value) {
-      var attributes, changeName, changedPropertyNames, current, existingObject, name, previous, _i, _len, _ref;
+      var attributes, changeName, changedPropertyNames, current, existingObject, name, previous, _i, _len, _ref, _ref1;
       if (key == null) {
         throw new Error('can not set with undefined');
       }
@@ -173,6 +183,11 @@
       }
       if (attributes[this.idAttribute] != null) {
         this[this.idAttribute] = attributes[this.idAttribute];
+        if (!this._properties[this.idAttribute]) {
+          if ((_ref = this._parent) != null) {
+            _ref.move(this.cid, this.id);
+          }
+        }
       }
       this._previousProperties = _.clone(this._properties);
       current = this._properties;
@@ -187,7 +202,7 @@
         if (previous[name] !== value) {
           this.changed[name] = value;
         }
-        if ((((_ref = current[name]) != null ? _ref.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {
+        if ((((_ref1 = current[name]) != null ? _ref1.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {
           existingObject = current[name];
           existingObject.set(value);
         } else {
@@ -228,6 +243,9 @@
 
     Model.prototype.get = function(key) {
       var _ref, _ref1;
+      if (key == null) {
+        throw new Error('Must have a valid object for get()');
+      }
       return this._properties[(_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key];
     };
 
