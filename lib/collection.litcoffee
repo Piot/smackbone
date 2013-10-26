@@ -24,9 +24,6 @@ If the receiver is a collection, then it uses the id of the objects to set the p
 					attributes[id] = o
 
 			super attributes
-
-		each: (func) ->
-			func value for key, value of @_properties
-				
+		
 		toJSON: ->
 			_.toArray super()

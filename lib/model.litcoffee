@@ -90,6 +90,9 @@
 		remove: (object) ->
 			@unset object
 
+		each: (func) ->
+			func value for key, value of @_properties
+
 		get: (key) ->
 			throw new Error 'Must have a valid object for get()' if not key?
 			if typeof key is 'string'
@@ -138,6 +141,7 @@
 		reset: (a, b) ->
 			@unset key for key, value of @_properties
 			@set a, b if a?
+			@trigger 'reset', @
 
 		isEmpty: ->
 			@length is 0

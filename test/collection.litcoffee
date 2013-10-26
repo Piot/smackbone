@@ -288,3 +288,17 @@
 			@collection.set 'cars', collection
 			@collection.get("cars/#{car.id}/make").should.be.equal 'sportscar'
 			@collection.get('cars').should.be.equal collection
+
+		it 'triggers reset', (done) ->
+			@collection.on 'reset', =>
+				@collection.get(replacedDiamond).get('carat').should.equal 900
+				done()
+
+			originalDiamond = new smackbone.Model
+				carat: 800
+
+			replacedDiamond = new smackbone.Model
+				carat: 900
+
+			@collection.add originalDiamond
+			@collection.reset replacedDiamond

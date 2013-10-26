@@ -241,6 +241,17 @@
       return this.unset(object);
     };
 
+    Model.prototype.each = function(func) {
+      var key, value, _ref, _results;
+      _ref = this._properties;
+      _results = [];
+      for (key in _ref) {
+        value = _ref[key];
+        _results.push(func(value));
+      }
+      return _results;
+    };
+
     Model.prototype.get = function(key) {
       var id, model, parts, _i, _len, _ref, _ref1;
       if (key == null) {
@@ -322,8 +333,9 @@
         this.unset(key);
       }
       if (a != null) {
-        return this.set(a, b);
+        this.set(a, b);
       }
+      return this.trigger('reset', this);
     };
 
     Model.prototype.isEmpty = function() {
@@ -370,17 +382,6 @@
         }
       }
       return Collection.__super__.set.call(this, attributes);
-    };
-
-    Collection.prototype.each = function(func) {
-      var key, value, _ref1, _results;
-      _ref1 = this._properties;
-      _results = [];
-      for (key in _ref1) {
-        value = _ref1[key];
-        _results.push(func(value));
-      }
-      return _results;
     };
 
     Collection.prototype.toJSON = function() {
