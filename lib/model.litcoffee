@@ -124,9 +124,9 @@
 				model = model._parent
 			model
 
-		fetch: (queryObject) ->
-			@_root().trigger 'fetch_request', @path(), @, queryObject
-			@trigger 'fetch', @, queryObject
+		fetch: (queryObject, options) ->
+			@_root().trigger 'fetch_request', @path(), @, queryObject, options
+			@trigger 'fetch', @, queryObject, options
 
 		save: ->
 			@_root().trigger 'save_request', @path(), @

@@ -7,12 +7,14 @@
 			@root.on 'save_request', @_onSaveRequest
 			@root.on 'destroy_request', @_onDestroyRequest
 
-		_onFetchRequest: (path, model, queryObject) =>
-			options = 
+		_onFetchRequest: (path, model, queryObject, options) =>
+			options = options ? {}
+			request = 
 				type: 'GET'
 				done: (response) =>
-					model.set response
-			@_request options, path, queryObject
+					method = if options.reset then 'reset' else 'set'
+					model[method] response
+			@_request request, path, queryObject
 
 		_onSaveRequest: (path, model) =>
 			options =

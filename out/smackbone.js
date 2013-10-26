@@ -306,9 +306,9 @@
       return model;
     };
 
-    Model.prototype.fetch = function(queryObject) {
-      this._root().trigger('fetch_request', this.path(), this, queryObject);
-      return this.trigger('fetch', this, queryObject);
+    Model.prototype.fetch = function(queryObject, options) {
+      this._root().trigger('fetch_request', this.path(), this, queryObject, options);
+      return this.trigger('fetch', this, queryObject, options);
     };
 
     Model.prototype.save = function() {
@@ -408,16 +408,19 @@
       this.root.on('destroy_request', this._onDestroyRequest);
     }
 
-    Syncer.prototype._onFetchRequest = function(path, model, queryObject) {
-      var options,
+    Syncer.prototype._onFetchRequest = function(path, model, queryObject, options) {
+      var request,
         _this = this;
-      options = {
+      options = options != null ? options : {};
+      request = {
         type: 'GET',
         done: function(response) {
-          return model.set(response);
+          var method;
+          method = options.reset ? 'reset' : 'set';
+          return model[method](response);
         }
       };
-      return this._request(options, path, queryObject);
+      return this._request(request, path, queryObject);
     };
 
     Syncer.prototype._onSaveRequest = function(path, model) {
