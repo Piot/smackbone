@@ -364,22 +364,22 @@
 
     Collection.prototype.set = function(key, value) {
       var array, attributes, id, o, _i, _len, _ref1;
-      if (value != null) {
-        (attributes = {})[key] = value;
-      } else {
+      if (typeof key === 'object') {
         array = _.isArray(key) ? array = key : array = [key];
         attributes = {};
         for (_i = 0, _len = array.length; _i < _len; _i++) {
           o = array[_i];
           id = (_ref1 = o[this.idAttribute]) != null ? _ref1 : o.cid;
           if (id == null) {
-            throw new Error('In collection you must have a valid id or cid');
+            o = new Smackbone.Model(o);
           }
           if (o._parent == null) {
             o._parent = this;
           }
           attributes[id] = o;
         }
+      } else {
+        (attributes = {})[key] = value;
       }
       return Collection.__super__.set.call(this, attributes);
     };

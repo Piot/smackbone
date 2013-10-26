@@ -10,18 +10,17 @@
 If the receiver is a collection, then it uses the id of the objects to set the properties.
 
 		set: (key, value) ->
-			if value?
-				(attributes = {})[key] = value
-			else
+			if typeof key is 'object'
 				array = if _.isArray key then array = key else array = [key]
 
 				attributes = {}
 				for o in array
 					id = o[@idAttribute] ? o.cid
-					throw new Error 'In collection you must have a valid id or cid' if not id?
-					if not o._parent?
-						o._parent = @
+					o = new Smackbone.Model o if not id?
+					o._parent = @ if not o._parent?
 					attributes[id] = o
+			else
+				(attributes = {})[key] = value
 
 			super attributes
 		

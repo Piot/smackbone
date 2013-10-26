@@ -263,10 +263,17 @@
 			fetchedPosition.should.be.instanceof Position
 			fetchedPosition.get('x').should.equal 20
 
-		#it 'should possible to add simple object without id to collection', ->
-		#	added = @collection.add
-		#		test: 42
-		#		name: 'something'
+Not so sure about the usefulness of adding objects to a collection where their id is unknown.
+You can not lookup a specific object after it is added, only enumerate the collection.
+
+		it 'should possible to add simple object without id to collection', (done) ->
+			@collection.add
+				test: 42
+				name: 'something'
+
+			@collection.each (model) ->
+				model.get('test').should.equal 42
+				done()
 
 		it 'should save with only one id in collection', ->	
 			model = new smackbone.Model
