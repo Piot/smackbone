@@ -11,8 +11,12 @@ If the receiver is a collection, then it uses the id of the objects to set the p
 
 		set: (key, value) ->
 			if typeof key is 'object'
-				array = if _.isArray key then array = key else array = [key]
 
+Todo: Should make test to make sure why checking for isEmpty is needed
+
+				return if _.isEmpty key 
+
+				array = if _.isArray key then array = key else array = [key]
 				attributes = {}
 				for o in array
 					id = o[@idAttribute] ? o.cid

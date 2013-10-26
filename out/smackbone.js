@@ -365,6 +365,9 @@
     Collection.prototype.set = function(key, value) {
       var array, attributes, id, o, _i, _len, _ref1;
       if (typeof key === 'object') {
+        if (_.isEmpty(key)) {
+          return;
+        }
         array = _.isArray(key) ? array = key : array = [key];
         attributes = {};
         for (_i = 0, _len = array.length; _i < _len; _i++) {
