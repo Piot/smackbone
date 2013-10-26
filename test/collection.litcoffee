@@ -170,7 +170,6 @@
 			@collection.get(4).priceWithTax().should.equal 150.0
 
 		it 'should create models from hierarchy', ->
-
 			class Flower extends smackbone.Model
 
 			class Flowers extends smackbone.Collection
@@ -205,8 +204,8 @@
 			garden.should.be.an.instanceof Garden
 			garden.get('flowers').should.be.an.instanceof Flowers
 			tulip = garden.get('flowers').get('96')
-			#tulip.should.be.an.instanceof Flower
-			#garden.numberOfFlowers().should.equal 2
+			tulip.should.be.an.instanceof Flower
+			garden.numberOfFlowers().should.equal 2
 
 		it 'should create models and issue a save request', (done) ->
 			class Toy extends smackbone.Model
