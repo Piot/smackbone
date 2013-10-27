@@ -152,8 +152,8 @@
     };
 
     Model.prototype._createModelFromName = function(name, value) {
-      var modelClass, _ref, _ref1;
-      modelClass = (_ref = (_ref1 = this.models) != null ? _ref1[name] : void 0) != null ? _ref : this.model;
+      var modelClass, _ref, _ref1, _ref2, _ref3;
+      modelClass = (_ref = (_ref1 = (_ref2 = this.modelClasses) != null ? _ref2[value[this.classField]] : void 0) != null ? _ref1 : (_ref3 = this.models) != null ? _ref3[name] : void 0) != null ? _ref : this.model;
       if (modelClass != null) {
         return new modelClass(value);
       } else {

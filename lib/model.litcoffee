@@ -24,7 +24,7 @@
 			new @constructor @_properties
 
 		_createModelFromName: (name, value) ->
-			modelClass = @models?[name] ? @model
+			modelClass = @modelClasses?[value[@classField]] ? @models?[name] ? @model
 			if modelClass? then new modelClass value else value
 
 		move: (currentId, nextId) ->

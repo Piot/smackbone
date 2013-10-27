@@ -308,3 +308,20 @@ You can not lookup a specific object after it is added, only enumerate the colle
 
 			@collection.add originalDiamond
 			@collection.reset replacedDiamond
+
+		it 'should create models depending on type field', ->
+			class Planet extends smackbone.Model
+				myName: ->
+					@get 'name'
+
+			@collection.classField = 'type'
+			@collection.modelClasses =
+				Planet: Planet
+
+			@collection.add
+				id: 42
+				type: 'Planet'
+				name: 'earth'
+			planet = @collection.get(42)
+			planet.should.be.instanceof Planet
+			planet.myName().should.equal 'earth'
