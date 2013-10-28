@@ -20,8 +20,12 @@ Todo: Should make test to make sure why checking for isEmpty is needed
 				attributes = {}
 				for o in array
 					id = o[@idAttribute] ? o.cid
-					o = new Smackbone.Model o if not id?
-					o._parent = @ if not o._parent?
+					if not id?
+						o = new Smackbone.Model o
+						id = o[@idAttribute] ? o.cid
+
+					if o instanceof Smackbone.Model
+						o._parent = @ if not o._parent?
 					attributes[id] = o
 			else
 				(attributes = {})[key] = value
