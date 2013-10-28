@@ -270,6 +270,8 @@ You can not lookup a specific object after it is added, only enumerate the colle
 				test: 42
 				name: 'something'
 
+			model = @collection._properties[undefined]
+			should.equal model, undefined
 			@collection.each (model) ->
 				model.get('test').should.equal 42
 				done()
@@ -325,3 +327,40 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			planet = @collection.get(42)
 			planet.should.be.instanceof Planet
 			planet.myName().should.equal 'earth'
+
+		it 'should be able to access using index', ->
+			lamp = new smackbone.Model
+			sun = new smackbone.Model
+
+			should.equal @collection.at 0, undefined
+			should.equal @collection.at 1, undefined
+
+			@collection.add sun
+			@collection.at(0).should.equal sun
+			should.equal @collection.at 1, undefined
+
+			@collection.add lamp
+			@collection.first().should.equal sun
+			@collection.at(1).should.equal lamp
+			should.equal @collection.at 2, undefined
+
+			@collection.remove sun
+			@collection.at(0).should.equal lamp
+			@collection.last().should.equal lamp
+
+		it 'should set internal _parent', ->
+			@collection.add
+				type: 'moon'
+
+			model = @collection.at 0
+			model._parent.should.equal @collection
+
+			jupiter = new smackbone.Model
+			should.equal jupiter._parent, undefined
+			@collection.add jupiter
+			jupiter._parent.should.equal @collection
+
+			anotherCollection = new smackbone.Collection
+			anotherCollection.add jupiter
+
+			jupiter._parent.should.equal @collection
