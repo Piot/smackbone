@@ -364,3 +364,13 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			anotherCollection.add jupiter
 
 			jupiter._parent.should.equal @collection
+
+		it 'should use specified model for objects without id', ->
+			class Saturn extends smackbone.Model
+
+			@collection.model = Saturn
+			@collection.add 
+				temperature: 134
+
+			@collection.first().should.be.instanceof Saturn
+

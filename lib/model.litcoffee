@@ -24,8 +24,8 @@
 		clone: ->
 			new @constructor @_properties
 
-		_createModelFromName: (name, value) ->
-			modelClass = @modelClasses?[value[@classField]] ? @models?[name] ? @model
+		_createModelFromName: (name, value, backupClass) ->
+			modelClass = @modelClasses?[value[@classField]] ? @models?[name] ? @model ? backupClass
 			if modelClass? then new modelClass value else value
 
 		move: (currentId, nextId) ->

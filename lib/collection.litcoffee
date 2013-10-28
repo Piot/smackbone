@@ -21,7 +21,7 @@ Todo: Should make test to make sure why checking for isEmpty is needed
 				for o in array
 					id = o[@idAttribute] ? o.cid
 					if not id?
-						o = new Smackbone.Model o
+						o = @_createModelFromName undefined, o, Smackbone.Model
 						id = o[@idAttribute] ? o.cid
 
 					if o instanceof Smackbone.Model

@@ -159,9 +159,9 @@
       return new this.constructor(this._properties);
     };
 
-    Model.prototype._createModelFromName = function(name, value) {
-      var modelClass, _ref, _ref1, _ref2, _ref3;
-      modelClass = (_ref = (_ref1 = (_ref2 = this.modelClasses) != null ? _ref2[value[this.classField]] : void 0) != null ? _ref1 : (_ref3 = this.models) != null ? _ref3[name] : void 0) != null ? _ref : this.model;
+    Model.prototype._createModelFromName = function(name, value, backupClass) {
+      var modelClass, _ref, _ref1, _ref2, _ref3, _ref4;
+      modelClass = (_ref = (_ref1 = (_ref2 = (_ref3 = this.modelClasses) != null ? _ref3[value[this.classField]] : void 0) != null ? _ref2 : (_ref4 = this.models) != null ? _ref4[name] : void 0) != null ? _ref1 : this.model) != null ? _ref : backupClass;
       if (modelClass != null) {
         return new modelClass(value);
       } else {
@@ -397,7 +397,7 @@
           o = array[_i];
           id = (_ref1 = o[this.idAttribute]) != null ? _ref1 : o.cid;
           if (id == null) {
-            o = new Smackbone.Model(o);
+            o = this._createModelFromName(void 0, o, Smackbone.Model);
             id = (_ref2 = o[this.idAttribute]) != null ? _ref2 : o.cid;
           }
           if (o instanceof Smackbone.Model) {
