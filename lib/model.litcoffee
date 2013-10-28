@@ -7,6 +7,7 @@
 			@length = 0
 			@idAttribute = 'id'
 			@changed = {}
+			@_indexToModel = []
 			@set attributes if attributes?
 			if @models?
 				for key, modelClass of @models
@@ -67,6 +68,7 @@
 					if not (value instanceof Smackbone.Model)
 						value = @_createModelFromName name, value
 					current[name] = value
+					@_indexToModel.push value
 					@length = _.keys(current).length
 
 					if value instanceof Smackbone.Model and not value._parent?
@@ -91,7 +93,7 @@
 			@unset object
 
 		each: (func) ->
-			func value for key, value of @_properties
+			func value, key for key, value of @_properties
 
 		get: (key) ->
 			throw new Error 'Must have a valid object for get()' if not key?
@@ -103,13 +105,18 @@
 						model = model._properties[id]
 					else
 						model = model[id]
-				model	
+				model
 			else
 				@_properties[key[@idAttribute] ? key.cid ? key]
+
+		at: (index) ->
+			@_indexToModel[index]
 
 		unset: (key) ->
 			key = key[@idAttribute] ? key.cid ? key
 			model = @_properties[key]
+			index = _.indexOf @indexToModel, model
+			@_indexToModel.splice index, 1
 			delete @_properties[key]
 			@length = _.keys(@_properties).length
 			model?.trigger? 'unset', model
