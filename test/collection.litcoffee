@@ -374,3 +374,8 @@ You can not lookup a specific object after it is added, only enumerate the colle
 
 			@collection.first().should.be.instanceof Saturn
 
+		it 'should accept empty object', ->
+			@collection.add {}
+
+		it 'should accept empty array', ->
+			@collection.add []

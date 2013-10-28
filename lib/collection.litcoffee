@@ -12,9 +12,9 @@ If the receiver is a collection, then it uses the id of the objects to set the p
 		set: (key, value) ->
 			if typeof key is 'object'
 
-Todo: Should make test to make sure why checking for isEmpty is needed
+Todo: Should make test to make sure why checking for isEmpty is needed for some situations
 
-				return if _.isEmpty key 
+				# return if _.isEmpty key 
 
 				array = if _.isArray key then array = key else array = [key]
 				attributes = {}
