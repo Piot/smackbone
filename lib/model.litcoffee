@@ -112,10 +112,16 @@
 		at: (index) ->
 			@_indexToModel[index]
 
+		first: ->
+			@at 0
+
+		last: ->
+			@at @_indexToModel.length - 1
+
 		unset: (key) ->
 			key = key[@idAttribute] ? key.cid ? key
 			model = @_properties[key]
-			index = _.indexOf @indexToModel, model
+			index = _.indexOf @_indexToModel, model
 			@_indexToModel.splice index, 1
 			delete @_properties[key]
 			@length = _.keys(@_properties).length
