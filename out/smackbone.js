@@ -64,34 +64,41 @@
     };
 
     Event.prototype.off = function(name, callback) {
-      var event, events, key, names, newEvents, _i, _j, _len, _len1;
+      var event, events, key, names, newEvents, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+      if (this._events == null) {
+        this._events = {};
+      }
       if (callback == null) {
         this._events = {};
         return this;
       }
-      events = this._events[name];
-      names = name ? [name] : (function() {
-        var _i, _len, _ref, _results;
-        _ref = this._events;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          key = _ref[_i];
-          _results.push(key);
-        }
-        return _results;
-      }).call(this);
-      for (_i = 0, _len = names.length; _i < _len; _i++) {
-        name = names[_i];
-        newEvents = [];
-        this._events[name] = newEvents;
-        for (_j = 0, _len1 = events.length; _j < _len1; _j++) {
-          event = events[_j];
-          if (callback !== event.callback) {
-            newEvents.push(event);
+      _ref = name.split(' ');
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        name = _ref[_i];
+        events = (_ref1 = this._events[name]) != null ? _ref1 : [];
+        names = name ? [name] : (function() {
+          var _j, _len1, _ref2, _results;
+          _ref2 = this._events;
+          _results = [];
+          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+            key = _ref2[_j];
+            _results.push(key);
           }
-        }
-        if (newEvents.length === 0) {
-          delete this._events[name];
+          return _results;
+        }).call(this);
+        for (_j = 0, _len1 = names.length; _j < _len1; _j++) {
+          name = names[_j];
+          newEvents = [];
+          this._events[name] = newEvents;
+          for (_k = 0, _len2 = events.length; _k < _len2; _k++) {
+            event = events[_k];
+            if (callback !== event.callback) {
+              newEvents.push(event);
+            }
+          }
+          if (newEvents.length === 0) {
+            delete this._events[name];
+          }
         }
       }
       return this;
@@ -122,6 +129,7 @@
       this.length = 0;
       this.idAttribute = 'id';
       this.changed = {};
+      this._indexToModel = [];
       if (attributes != null) {
         this.set(attributes);
       }
@@ -210,6 +218,7 @@
             value = this._createModelFromName(name, value);
           }
           current[name] = value;
+          this._indexToModel.push(value);
           this.length = _.keys(current).length;
           if (value instanceof Smackbone.Model && (value._parent == null)) {
             value._parent = this;
@@ -247,7 +256,7 @@
       _results = [];
       for (key in _ref) {
         value = _ref[key];
-        _results.push(func(value));
+        _results.push(func(value, key));
       }
       return _results;
     };
@@ -274,10 +283,24 @@
       }
     };
 
+    Model.prototype.at = function(index) {
+      return this._indexToModel[index];
+    };
+
+    Model.prototype.first = function() {
+      return this.at(0);
+    };
+
+    Model.prototype.last = function() {
+      return this.at(this._indexToModel.length - 1);
+    };
+
     Model.prototype.unset = function(key) {
-      var model, _ref, _ref1;
+      var index, model, _ref, _ref1;
       key = (_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key;
       model = this._properties[key];
+      index = _.indexOf(this._indexToModel, model);
+      this._indexToModel.splice(index, 1);
       delete this._properties[key];
       this.length = _.keys(this._properties).length;
       if (model != null) {
@@ -363,7 +386,7 @@
     };
 
     Collection.prototype.set = function(key, value) {
-      var array, attributes, id, o, _i, _len, _ref1;
+      var array, attributes, id, o, _i, _len, _ref1, _ref2;
       if (typeof key === 'object') {
         if (_.isEmpty(key)) {
           return;
@@ -375,9 +398,12 @@
           id = (_ref1 = o[this.idAttribute]) != null ? _ref1 : o.cid;
           if (id == null) {
             o = new Smackbone.Model(o);
+            id = (_ref2 = o[this.idAttribute]) != null ? _ref2 : o.cid;
           }
-          if (o._parent == null) {
-            o._parent = this;
+          if (o instanceof Smackbone.Model) {
+            if (o._parent == null) {
+              o._parent = this;
+            }
           }
           attributes[id] = o;
         }
