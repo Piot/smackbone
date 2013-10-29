@@ -14,7 +14,7 @@ If the receiver is a collection, then it uses the id of the objects to set the p
 
 Todo: Should make test to make sure why checking for isEmpty is needed for some situations
 
-				# return if _.isEmpty key 
+				return if _.isEmpty key 
 
 				array = if _.isArray key then array = key else array = [key]
 				attributes = {}
