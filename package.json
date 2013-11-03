@@ -23,14 +23,13 @@
 		"url": "https://github.com/piot/smackbone.git"
 	},
 	"devDependencies": {
-		"mocha":  "",
-		"coffee-script": "",
-		"should": "",
-		"grunt": "",
-		"grunt-cli": "",
-		"grunt-mocha-test": "",
-		"grunt-contrib-coffee": "",
-		"grunt-contrib-concat": ""
+		"coffee-script": ">=1.5.0",
+		"mocha":  ">=1.14.0",
+		"should": ">=2.0.0",
+		"grunt": ">=0.4.0",
+		"grunt-mocha-test": ">=0.7.0",
+		"grunt-contrib-coffee": ">=0.7.0",
+		"grunt-contrib-concat": ">=0.3.0"
 	},
 	"license": "MIT"
 }
