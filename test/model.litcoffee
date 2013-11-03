@@ -317,7 +317,7 @@
 			@model.set 'rabbit', 2
 			@model.set 'rabbit', undefined
 			should.equal @model.get 'rabbit', undefined
-			
+
 		it 'can return sub models from path', ->
 			@model.set
 				desk:
@@ -325,4 +325,21 @@
 						monitor:
 							size: '24 inch'
 			@model.get('desk/computer/monitor/size').should.equal '24 inch'
-			
+
+		it 'should handle changes to id', ->
+			@model.set
+				name: 'kalle'
+
+			@model.set
+				id: 4
+				name: 'kalle'
+
+			@model.get('id').should.equal 4
+			@model.id.should.equal 4
+
+			@model.set
+				id: 6
+				name: 'test'
+
+			@model.get('id').should.equal 6
+			@model.id.should.equal 6

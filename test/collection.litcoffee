@@ -217,7 +217,7 @@
 				should.strictEqual model.get('id'), undefined
 				@collection.get(model).should.equal model
 				done()
-			
+
 			model = @collection.create
 				name: 'ambulance'
 
@@ -276,7 +276,7 @@ You can not lookup a specific object after it is added, only enumerate the colle
 				model.get('test').should.equal 42
 				done()
 
-		it 'should save with only one id in collection', ->	
+		it 'should save with only one id in collection', ->
 			model = new smackbone.Model
 			cid = model.cid
 			@collection.add model
@@ -285,7 +285,7 @@ You can not lookup a specific object after it is added, only enumerate the colle
 				id: 4
 			should.equal @collection.get(cid), undefined
 			@collection.get(model.id).should.equal model
-			model.id?.should.be.ok	
+			model.id?.should.be.ok
 
 		it 'can return sub models from path', ->
 			car = new smackbone.Model
@@ -369,7 +369,7 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			class Saturn extends smackbone.Model
 
 			@collection.model = Saturn
-			@collection.add 
+			@collection.add
 				temperature: 134
 
 			@collection.first().should.be.instanceof Saturn
@@ -379,3 +379,26 @@ You can not lookup a specific object after it is added, only enumerate the colle
 
 		it 'should accept empty array', ->
 			@collection.add []
+
+		it 'should handle changes to id', ->
+			@collection.add
+				name: 'john'
+
+			model = @collection.first()
+
+			model.set
+				id: 4
+				name: 'paul'
+
+			model.get('id').should.equal 4
+			model.id.should.equal 4
+			@collection.get(4).should.equal model
+
+			model.set
+				id: 6
+				name: 'george'
+
+			should.equal @collection.get(4), undefined
+			model.get('id').should.equal 6
+			model.id.should.equal 6
+			@collection.get(6).should.equal model
