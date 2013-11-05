@@ -13,5 +13,12 @@
 			"follow_symlinks": true,
 			"path": ".."
 		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "Grunt Test",
+			"cmd": ["grunt", "test"]
+		}
 	]
 }
