@@ -7,6 +7,10 @@
 
 An attempt to make a more object oriented model framework.
 
+### Installation
+
+		npm install smackbone
+
 ### Event
 
 * on
