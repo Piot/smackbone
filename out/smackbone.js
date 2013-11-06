@@ -180,7 +180,7 @@
     };
 
     Model.prototype.set = function(key, value) {
-      var attributes, changeName, changedPropertyNames, current, existingObject, name, previous, _i, _len, _ref, _ref1;
+      var attributes, changeName, changedPropertyNames, current, existingObject, name, oldId, previous, _i, _len, _ref, _ref1;
       if (key == null) {
         throw new Error('can not set with undefined');
       }
@@ -190,11 +190,10 @@
         (attributes = {})[key] = value;
       }
       if (attributes[this.idAttribute] != null) {
+        oldId = this[this.idAttribute] || this.cid;
         this[this.idAttribute] = attributes[this.idAttribute];
-        if (!this._properties[this.idAttribute]) {
-          if ((_ref = this._parent) != null) {
-            _ref.move(this.cid, this.id);
-          }
+        if ((_ref = this._parent) != null) {
+          _ref.move(oldId, this[this.idAttribute]);
         }
       }
       this._previousProperties = _.clone(this._properties);

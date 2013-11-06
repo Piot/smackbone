@@ -43,9 +43,9 @@
 				(attributes = {})[key] = value
 
 			if attributes[@idAttribute]?
+				oldId = @[@idAttribute] or @cid
 				@[@idAttribute] = attributes[@idAttribute]
-				if not @_properties[@idAttribute]
-					@_parent?.move @cid, @id
+				@_parent?.move oldId, @[@idAttribute]
 
 			@_previousProperties = _.clone @_properties
 			current = @_properties

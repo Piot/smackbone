@@ -1,4 +1,5 @@
 node_modules
 npm-debug.log
 *.js
-smackbone.litcoffee
+out/*.litcoffee
+*.sublime-workspace
