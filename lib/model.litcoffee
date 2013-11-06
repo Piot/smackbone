@@ -133,17 +133,34 @@
 
 		_root: ->
 			model = @
-			while model._parent?
+			for i in [0..10]
+				if not model._parent?
+					break
 				model = model._parent
-			model
+
+			if not model._parent
+				model
+			else
+				console.warn "couldn't find root for:", @
+				undefined
 
 		fetch: (queryObject, options) ->
 			@_root().trigger 'fetch_request', @path(), @, queryObject, options
 			@trigger 'fetch', @, queryObject, options
 
+		_triggerUp: (name, args...) ->
+			model = @
+			path = ''
+			for i in [0..20]
+				if not model?
+					break
+				model.trigger name, path, args...
+				path = "/#{model[@idAttribute] ? ''}#{path}"
+				model = model._parent
+
 		save: ->
 			@_root().trigger 'save_request', @path(), @
-			@trigger 'save', @
+			@_triggerUp 'up_save_request', @
 
 		destroy: ->
 			@trigger 'destroy', @
