@@ -148,7 +148,12 @@
     }
 
     Model.prototype.toJSON = function() {
-      return _.clone(this._properties);
+      var key, properties;
+      properties = _.clone(this._properties);
+      for (key in this.transients) {
+        delete properties[key];
+      }
+      return properties;
     };
 
     Model.prototype.isNew = function() {

@@ -16,7 +16,10 @@
 			@initialize? attributes
 
 		toJSON: ->
-			_.clone @_properties
+			properties = _.clone @_properties
+			for key of @transients
+				delete properties[key]
+			properties
 
 		isNew: ->
 			not @[@idAttribute]?
