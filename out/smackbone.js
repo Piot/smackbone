@@ -277,6 +277,9 @@
         model = this;
         for (_i = 0, _len = parts.length; _i < _len; _i++) {
           id = parts[_i];
+          if (id === '') {
+            break;
+          }
           if (model instanceof Smackbone.Model) {
             model = model._properties[id];
           } else {

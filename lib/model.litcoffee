@@ -106,6 +106,8 @@
 				parts = key.split '/'
 				model = @
 				for id in parts
+					if id is ''
+						break
 					if model instanceof Smackbone.Model
 						model = model._properties[id]
 					else
