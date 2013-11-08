@@ -343,3 +343,14 @@
 
 			@model.get('id').should.equal 6
 			@model.id.should.equal 6
+
+		it 'should not include transient properties in toJSON', ->
+			@model.set 'important', 44
+			@model.set 'not_important', 'temp'
+
+			@model.toJSON().important.should.equal 44
+			@model.toJSON().not_important.should.equal 'temp'
+			@model.transients =
+				not_important: true
+			@model.toJSON().important.should.equal 44
+			should.equal @model.toJSON().not_important, undefined
