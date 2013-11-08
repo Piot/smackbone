@@ -303,10 +303,10 @@
 
 		it 'should detect change', (done) ->
 			count = 0
-			@model.on 'change:rabbit', (model) ->
+			@model.on 'change:rabbit', (rabbit) ->
 				count += 1
 				if count is 2
-					should.equal model.get('rabbit'), null
+					should.equal rabbit, null
 					done()
 
 			model = new smackbone.Model
