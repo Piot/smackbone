@@ -79,7 +79,7 @@
 					@trigger 'add', value, @
 
 			for changeName in changedPropertyNames
-				@trigger "change:#{changeName}", @, current[changeName]
+				@trigger "change:#{changeName}", current[changeName], @
 
 			@trigger 'change', @ if changedPropertyNames.length > 0
 
