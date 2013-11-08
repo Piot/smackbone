@@ -37,11 +37,13 @@
 			@unset currentId
 			@set nextId, o
 
-		set: (key, value) ->
+		set: (key, value, options) ->
 			throw new Error 'can not set with undefined' if not key?
 
 			if typeof key is 'object'
 				attributes = key
+				options = value
+				value = undefined
 			else
 				(attributes = {})[key] = value
 
@@ -58,10 +60,10 @@
 			@changed = {}
 
 			for name, value of attributes
-				if current[name] isnt value
+				if !_.isEqual current[name], value
 					changedPropertyNames.push name
 
-				if previous[name] isnt value
+				if !_.isEqual previous[name], value
 					@changed[name] = value
 
 				if current[name]?.set? and not (value instanceof Smackbone.Model) and value?
@@ -79,12 +81,12 @@
 						if not value[@idAttribute]?
 							value[@idAttribute] = name
 
-					@trigger 'add', value, @
+					@trigger 'add', value, @, options
 
 			for changeName in changedPropertyNames
-				@trigger "change:#{changeName}", current[changeName], @
+				@trigger "change:#{changeName}", current[changeName], @, options
 
-			@trigger 'change', @ if changedPropertyNames.length > 0
+			@trigger 'change', @, options if changedPropertyNames.length > 0
 
 		contains: (key) ->
 			@get(key)?
@@ -121,15 +123,15 @@
 		last: ->
 			@at @_indexToModel.length - 1
 
-		unset: (key) ->
+		unset: (key, options) ->
 			key = key[@idAttribute] ? key.cid ? key
 			model = @_properties[key]
 			index = _.indexOf @_indexToModel, model
 			@_indexToModel.splice index, 1
 			delete @_properties[key]
 			@length = _.keys(@_properties).length
-			model?.trigger? 'unset', model
-			@trigger 'remove', model, @
+			model?.trigger? 'unset', model, @, options
+			@trigger 'remove', model, @, options
 
 		path: ->
 			if @_parent? then "#{@_parent.path()}/#{@[@idAttribute] ? ''}" else @rootPath ? ''
@@ -161,20 +163,20 @@
 				path = "/#{model[@idAttribute] ? ''}#{path}"
 				model = model._parent
 
-		save: ->
-			@_root().trigger 'save_request', @path(), @
-			@_triggerUp 'up_save_request', @
+		save: (options) ->
+			@_root().trigger 'save_request', @path(), @, options
+			@_triggerUp 'up_save_request', @, options
 
-		destroy: ->
-			@trigger 'destroy', @
+		destroy: (options) ->
+			@trigger 'destroy', @, options
 			if not @isNew()
-				@_root().trigger 'destroy_request', @path(), @
+				@_root().trigger 'destroy_request', @path(), @, options
 			@_parent?.remove @
 
-		reset: (a, b) ->
+		reset: (a, b, options) ->
 			@unset key for key, value of @_properties
-			@set a, b if a?
-			@trigger 'reset', @
+			@set a, b, options if a?
+			@trigger 'reset', @, options
 
 		isEmpty: ->
 			@length is 0

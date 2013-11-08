@@ -184,13 +184,15 @@
       return this.set(nextId, o);
     };
 
-    Model.prototype.set = function(key, value) {
+    Model.prototype.set = function(key, value, options) {
       var attributes, changeName, changedPropertyNames, current, existingObject, name, oldId, previous, _i, _len, _ref, _ref1;
       if (key == null) {
         throw new Error('can not set with undefined');
       }
       if (typeof key === 'object') {
         attributes = key;
+        options = value;
+        value = void 0;
       } else {
         (attributes = {})[key] = value;
       }
@@ -208,10 +210,10 @@
       this.changed = {};
       for (name in attributes) {
         value = attributes[name];
-        if (current[name] !== value) {
+        if (!_.isEqual(current[name], value)) {
           changedPropertyNames.push(name);
         }
-        if (previous[name] !== value) {
+        if (!_.isEqual(previous[name], value)) {
           this.changed[name] = value;
         }
         if ((((_ref1 = current[name]) != null ? _ref1.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {
@@ -230,15 +232,15 @@
               value[this.idAttribute] = name;
             }
           }
-          this.trigger('add', value, this);
+          this.trigger('add', value, this, options);
         }
       }
       for (_i = 0, _len = changedPropertyNames.length; _i < _len; _i++) {
         changeName = changedPropertyNames[_i];
-        this.trigger("change:" + changeName, this, current[changeName]);
+        this.trigger("change:" + changeName, current[changeName], this, options);
       }
       if (changedPropertyNames.length > 0) {
-        return this.trigger('change', this);
+        return this.trigger('change', this, options);
       }
     };
 
@@ -299,7 +301,7 @@
       return this.at(this._indexToModel.length - 1);
     };
 
-    Model.prototype.unset = function(key) {
+    Model.prototype.unset = function(key, options) {
       var index, model, _ref, _ref1;
       key = (_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key;
       model = this._properties[key];
@@ -309,10 +311,10 @@
       this.length = _.keys(this._properties).length;
       if (model != null) {
         if (typeof model.trigger === "function") {
-          model.trigger('unset', model);
+          model.trigger('unset', model, this, options);
         }
       }
-      return this.trigger('remove', model, this);
+      return this.trigger('remove', model, this, options);
     };
 
     Model.prototype.path = function() {
@@ -325,12 +327,20 @@
     };
 
     Model.prototype._root = function() {
-      var model;
+      var i, model, _i;
       model = this;
-      while (model._parent != null) {
+      for (i = _i = 0; _i <= 10; i = ++_i) {
+        if (model._parent == null) {
+          break;
+        }
         model = model._parent;
       }
-      return model;
+      if (!model._parent) {
+        return model;
+      } else {
+        console.warn("couldn't find root for:", this);
+        return void 0;
+      }
     };
 
     Model.prototype.fetch = function(queryObject, options) {
@@ -338,21 +348,38 @@
       return this.trigger('fetch', this, queryObject, options);
     };
 
-    Model.prototype.save = function() {
-      this._root().trigger('save_request', this.path(), this);
-      return this.trigger('save', this);
+    Model.prototype._triggerUp = function() {
+      var args, i, model, name, path, _i, _ref, _results;
+      name = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      model = this;
+      path = '';
+      _results = [];
+      for (i = _i = 0; _i <= 20; i = ++_i) {
+        if (model == null) {
+          break;
+        }
+        model.trigger.apply(model, [name, path].concat(__slice.call(args)));
+        path = "/" + ((_ref = model[this.idAttribute]) != null ? _ref : '') + path;
+        _results.push(model = model._parent);
+      }
+      return _results;
     };
 
-    Model.prototype.destroy = function() {
+    Model.prototype.save = function(options) {
+      this._root().trigger('save_request', this.path(), this, options);
+      return this._triggerUp('up_save_request', this, options);
+    };
+
+    Model.prototype.destroy = function(options) {
       var _ref;
-      this.trigger('destroy', this);
+      this.trigger('destroy', this, options);
       if (!this.isNew()) {
-        this._root().trigger('destroy_request', this.path(), this);
+        this._root().trigger('destroy_request', this.path(), this, options);
       }
       return (_ref = this._parent) != null ? _ref.remove(this) : void 0;
     };
 
-    Model.prototype.reset = function(a, b) {
+    Model.prototype.reset = function(a, b, options) {
       var key, value, _ref;
       _ref = this._properties;
       for (key in _ref) {
@@ -360,9 +387,9 @@
         this.unset(key);
       }
       if (a != null) {
-        this.set(a, b);
+        this.set(a, b, options);
       }
-      return this.trigger('reset', this);
+      return this.trigger('reset', this, options);
     };
 
     Model.prototype.isEmpty = function() {

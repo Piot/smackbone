@@ -76,6 +76,29 @@
 				something_else: 99
 			@model.changed.should.eql {something_else:99}
 
+		it 'should keep track of changed properties for complex objects', ->
+			@model.changed.should.be.empty
+			@model.set
+				temp: 42
+				sub: [
+					another: 'hello'
+					state:
+						status:
+							value: 1
+				]
+
+			@model.changed.should.eql {temp:42,sub:[{another:'hello',state:{status:{value:1}}}]}
+			@model.set
+				temp: 42
+				sub: [
+					another: 'hello'
+					state:
+						status:
+							value: 1.0
+				]
+
+			@model.changed.should.eql {}
+
 		it 'should fire change for specific properties', (done) ->
 			shouldFireNow = false
 			@model.on 'change:something', ->
@@ -354,3 +377,11 @@
 				not_important: true
 			@model.toJSON().important.should.equal 44
 			should.equal @model.toJSON().not_important, undefined
+
+		it 'should use options in events', (done) ->
+			@model.on 'change:something', (newValue, model, options) ->
+				done() if options.sender is 'me'
+
+			@model.set 'something', 44,
+				sender: 'me'
+
