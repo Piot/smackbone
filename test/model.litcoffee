@@ -349,6 +349,14 @@
 							size: '24 inch'
 			@model.get('desk/computer/monitor/size').should.equal '24 inch'
 
+		it 'can return sub models from path with trailing slash', ->
+			@model.set
+				desk:
+					computer:
+						monitor:
+							size: '24 inch'
+			@model.get('desk/computer/monitor/size/').should.equal '24 inch'
+
 		it 'should handle changes to id', ->
 			@model.set
 				name: 'kalle'

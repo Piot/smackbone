@@ -273,12 +273,15 @@
         throw new Error('Must have a valid object for get()');
       }
       if (typeof key === 'string') {
+        if (key[key.length - 1] === '/') {
+          key = key.slice(0, -1);
+        }
         parts = key.split('/');
         model = this;
         for (_i = 0, _len = parts.length; _i < _len; _i++) {
           id = parts[_i];
-          if (id === '') {
-            break;
+          if (model == null) {
+            throw new Error("Couldn't lookup '" + id + "' in '" + key + "'");
           }
           if (model instanceof Smackbone.Model) {
             model = model._properties[id];

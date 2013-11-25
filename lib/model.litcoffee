@@ -103,11 +103,11 @@
 		get: (key) ->
 			throw new Error 'Must have a valid object for get()' if not key?
 			if typeof key is 'string'
+				key = key[0...-1] if key[key.length-1] is '/'
 				parts = key.split '/'
 				model = @
 				for id in parts
-					if id is ''
-						break
+					throw new Error "Couldn't lookup '#{id}' in '#{key}'" if not model?
 					if model instanceof Smackbone.Model
 						model = model._properties[id]
 					else
