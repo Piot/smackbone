@@ -39,7 +39,11 @@
 		_request: (options, path, queryObject) ->
 			queryString = @_encodeQueryObject queryObject
 			options.url = (@urlRoot ? '') + path + queryString
-			options.data = JSON.stringify options.data?.toJSON()
+			if options.type is 'GET'
+				options.data = undefined
+			else
+				options.data = JSON.stringify options.data?.toJSON()
+			
 			options.contentType = 'application/json'
 			@trigger 'request', options
 			Smackbone.$.ajax(options).done options.done

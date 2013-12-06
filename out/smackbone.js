@@ -534,7 +534,11 @@
       var queryString, _ref1, _ref2;
       queryString = this._encodeQueryObject(queryObject);
       options.url = ((_ref1 = this.urlRoot) != null ? _ref1 : '') + path + queryString;
-      options.data = JSON.stringify((_ref2 = options.data) != null ? _ref2.toJSON() : void 0);
+      if (options.type === 'GET') {
+        options.data = void 0;
+      } else {
+        options.data = JSON.stringify((_ref2 = options.data) != null ? _ref2.toJSON() : void 0);
+      }
       options.contentType = 'application/json';
       this.trigger('request', options);
       return Smackbone.$.ajax(options).done(options.done);
