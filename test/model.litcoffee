@@ -42,7 +42,7 @@
 
 			@model.get('color').should.eql 'red'
 			@model.unset 'color'
-			should.equal @model.get('color'), undefined
+			should.not.exist @model.get 'color'
 
 		it 'should fire change events', (done) ->
 			detectedChange = false
@@ -315,7 +315,7 @@
 			@model.set 'hello', 'world'
 			@model.get('hello').should.equal 'world'
 			@model.reset()
-			should.equal @model.get('hello'), undefined
+			should.not.exist @model.get 'hello'
 
 		it 'should reset with values', ->
 			@model.set 'hello', 'world'
@@ -339,7 +339,7 @@
 		it 'should handle setting undefined', ->
 			@model.set 'rabbit', 2
 			@model.set 'rabbit', undefined
-			should.equal @model.get 'rabbit', undefined
+			should.not.exist @model.get 'rabbit'
 
 		it 'can return sub models from path', ->
 			@model.set
@@ -384,7 +384,7 @@
 			@model.transients =
 				not_important: true
 			@model.toJSON().important.should.equal 44
-			should.equal @model.toJSON().not_important, undefined
+			should.not.exist @model.toJSON().not_important
 
 		it 'should use options in events', (done) ->
 			@model.on 'change:something', (newValue, model, options) ->

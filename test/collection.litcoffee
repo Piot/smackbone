@@ -14,7 +14,7 @@
 			returnedModel.should.equal.model
 
 			returnedModel = @collection.get 2
-			should.equal returnedModel, undefined
+			should.not.exist returnedModel
 
 		it 'should hold the right amount of models', ->
 			model = new smackbone.Model
@@ -44,7 +44,7 @@
 			returnedModel = @collection.remove returnedModel
 			@collection.length.should.equal 0
 			returnedModel = @collection.get 128
-			should.equal returnedModel, undefined
+			should.not.exist returnedModel
 
 		it 'should report path for newly added models', ->
 			model = new smackbone.Model
@@ -101,7 +101,7 @@
 			@collection.add model
 			@collection.get(model).should.equal model
 			@collection.remove model
-			should.equal @collection.get(model), undefined
+			should.not.exist @collection.get(model)
 
 		it 'should report event when removed', (done) ->
 			model = new smackbone.Model
@@ -214,7 +214,7 @@
 				model.should.instanceof Toy
 				path.should.equal '/'
 				model.get('name').should.equal 'ambulance'
-				should.strictEqual model.get('id'), undefined
+				should.not.exist model.get('id')
 				@collection.get(model).should.equal model
 				done()
 
@@ -271,7 +271,7 @@ You can not lookup a specific object after it is added, only enumerate the colle
 				name: 'something'
 
 			model = @collection._properties[undefined]
-			should.equal model, undefined
+			should.not.exist model
 			@collection.each (model) ->
 				model.get('test').should.equal 42
 				done()
@@ -283,7 +283,7 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			@collection.get(cid).should.equal model
 			model.set
 				id: 4
-			should.equal @collection.get(cid), undefined
+			should.not.exist @collection.get cid
 			@collection.get(model.id).should.equal model
 			model.id?.should.be.ok
 
@@ -332,17 +332,17 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			lamp = new smackbone.Model
 			sun = new smackbone.Model
 
-			should.equal @collection.at 0, undefined
-			should.equal @collection.at 1, undefined
+			should.not.exist @collection.at 0
+			should.not.exist @collection.at 1
 
 			@collection.add sun
 			@collection.at(0).should.equal sun
-			should.equal @collection.at 1, undefined
+			should.not.exist @collection.at 1
 
 			@collection.add lamp
 			@collection.first().should.equal sun
 			@collection.at(1).should.equal lamp
-			should.equal @collection.at 2, undefined
+			should.not.exist @collection.at 2
 
 			@collection.remove sun
 			@collection.at(0).should.equal lamp
@@ -356,7 +356,7 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			model._parent.should.equal @collection
 
 			jupiter = new smackbone.Model
-			should.equal jupiter._parent, undefined
+			should.not.exist jupiter._parent
 			@collection.add jupiter
 			jupiter._parent.should.equal @collection
 
@@ -398,7 +398,7 @@ You can not lookup a specific object after it is added, only enumerate the colle
 				id: 6
 				name: 'george'
 
-			should.equal @collection.get(4), undefined
+			should.not.exist @collection.get 4
 			model.get('id').should.equal 6
 			model.id.should.equal 6
 			@collection.get(6).should.equal model
