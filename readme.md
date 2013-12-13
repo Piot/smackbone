@@ -25,13 +25,17 @@ Removes the callback for the specified event. If no callback is specified, then 
 ### Model
 
 **set** `set(attributes, [options])`
-##### Example
+
+*Example*
+
 		cat.set("name", "Ella");
 
 		cat.set({name: "Ella"});
 
 **unset** `unset(attribute, [options])`
-##### Example
+
+*Example*
+
 		cat.unset("name");
 
 **reset** `reset(attributes, [options])`
@@ -40,7 +44,8 @@ Unsets all objects and performs a set with the attributes. See `set` function.
 **get** `get(attribute)`
 Returns the object with the specified attribute or id.
 
-##### Example
+*Example*
+
 		cat.get("name");
 
 		cat.get(1337);
@@ -52,7 +57,8 @@ Returns the relative path for the model.
 **each** `each(func)`
 Calls the function for each object stored with set.
 
-##### Example
+*Example*
+
 		cat.each(function(object) {
 			console.log("object:", object);
 		});
@@ -72,7 +78,7 @@ Returns the first object stored in the model.
 **last** `last()`
 Returns the last object stored in the model.
 
-### Sync
+#### Sync
 
 **fetch** `fetch()`
 Fetches the model from the backend (using one or more `Syncer`s).
@@ -83,12 +89,12 @@ Saves the model to the backend.
 **destroy** `destroy()`
 Destroys the model in the backend.
 
-### Other
+#### Other
 
 **toJSON** `toJSON()`
 Returns a copy of the stored objects that is useful for serialization (e.g. JSON.stringify).
 
-### Collection
+#### Collection
 Inherits from `Model`, so all functions available on `Model` can be called on a `Collection`.
 
 **add** `add(model)`
@@ -97,10 +103,10 @@ Adds the model to the collection. The key used is the .id attribute if it is pre
 **remove** `remove(model)`
 Removes the model from the collection.
 
-## Syncer
+### Syncer
 Performs sync to and from the backend. The sync commands are `fetch`, `save` and `destroy`.
 
-##### Example
+*Example*
 
 	cat = new Model({id:42});
 	var syncer = new Syncer({model: cat});
