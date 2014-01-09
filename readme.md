@@ -53,7 +53,7 @@ Returns the object with the specified attribute or id.
 **path** `path()`
 Returns the relative path for the model.
 
-### Collection
+#### Collection
 **each** `each(func)`
 Calls the function for each object stored with set.
 
@@ -94,7 +94,7 @@ Destroys the model in the backend.
 **toJSON** `toJSON()`
 Returns a copy of the stored objects that is useful for serialization (e.g. JSON.stringify).
 
-#### Collection
+### Collection
 Inherits from `Model`, so all functions available on `Model` can be called on a `Collection`.
 
 **add** `add(model)`
