@@ -7,20 +7,30 @@
 
 An attempt to make a more object oriented model framework.
 
-### Installation
+## Installation
 
 		npm install smackbone
 
-### Event
-The ability to trigger events and add and remove listeners.
+## Event
+Use to enable triggering and binding of custom events.
+
+		class EventEmitter extends smackbone.Event
+		emitter = new EventEmitter
+
 
 **on** `on(event, callback)`
 Adds the callback function for the event specified. The event string can contain multiple space-separated event names.
+
 
 **off** `off([event], [callback])`
 Removes the callback for the specified event. If no callback is specified, then all callbacks for that event is removed. If event isn't specified, all callbacks are removed for this object.
 
 **trigger** `trigger(event[,args...])`
+Triggers the callbacks for the specified event.
+
+		emitter.on 'event', (data) ->
+		emitter.trigger 'event'
+		emitter.off 'event'
 
 ### Model
 
