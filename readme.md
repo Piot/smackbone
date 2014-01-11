@@ -7,51 +7,68 @@
 
 An attempt to make a more object oriented model framework.
 
-### Installation
+## Installation
 
 		npm install smackbone
 
-### Event
-The ability to trigger events and add and remove listeners.
+# Usage
 
-**on** `on(event, callback)`
-Adds the callback function for the event specified. The event string can contain multiple space-separated event names.
+## Event
+Use to enable triggering and binding of custom events.
+
+		class EventEmitter extends smackbone.Event
+		emitter = new EventEmitter
+
+
+**on** `on("event", callback)`
+Adds the callback for the specified event. The event string can contain multiple space-separated event names.
+
 
 **off** `off([event], [callback])`
 Removes the callback for the specified event. If no callback is specified, then all callbacks for that event is removed. If event isn't specified, all callbacks are removed for this object.
 
-**trigger** `trigger(event[,args...])`
+**trigger** `trigger("event"[,args...])`
+Triggers the callbacks for the specified event.
 
-### Model
+		emitter.on 'event', (data) ->
+		emitter.trigger 'event'
+		emitter.off 'event'
+
+## Model
+		class Cat extends smackbone.Model
+		cat = new Cat
 
 **set** `set(attributes, [options])`
-
-*Example*
-
-		cat.set("name", "Ella");
-
-		cat.set({name: "Ella"});
+Sets the attributes according to input.
 
 **unset** `unset(attribute, [options])`
-
-*Example*
-
-		cat.unset("name");
+Unsets all objects and performs a set with the attributes. See `set` function.
 
 **reset** `reset(attributes, [options])`
-Unsets all objects and performs a set with the attributes. See `set` function.
 
 **get** `get(attribute)`
 Returns the object with the specified attribute or id.
 
-*Example*
-
-		cat.get("name");
-
-		cat.get(1337);
-
 **path** `path()`
 Returns the relative path for the model.
+
+**clone** `clone()`
+Returns a new but identical object.
+
+**toJSON** `toJSON`
+Returns an object literal containing the attributes.
+
+		cat.set("name", "Ella");
+		cat.set({name: "Ella"});
+
+		cat.unset("name");
+
+		cat.get("name");
+		cat.get(1337);
+		
+		catClone = cat.clone();
+		
+		cat.toJSON()
 
 #### Collection
 **each** `each(func)`
