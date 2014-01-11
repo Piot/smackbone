@@ -70,7 +70,7 @@ Checks if the specified attribute or id is stored in the model.
 Returns true if it doesn't contain any objects.
 
 **at** `at(index)`
-Fetches a object from the index (in the order that they were set or added).
+Fetches an object from the index (in the order that they were set or added).
 
 **first** `first()`
 Returns the first object stored in the model.
