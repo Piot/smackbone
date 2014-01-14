@@ -185,7 +185,7 @@
     };
 
     Model.prototype.set = function(key, value, options) {
-      var attributes, changeName, changedPropertyNames, current, existingObject, name, oldId, previous, _i, _len, _ref, _ref1;
+      var attributes, changeName, changedPropertyNames, current, existingObject, n, name, oldId, previous, v, _i, _len, _ref, _ref1;
       if (key == null) {
         throw new Error('can not set with undefined');
       }
@@ -224,7 +224,6 @@
             value = this._createModelFromName(name, value);
           }
           current[name] = value;
-          this._indexToModel.push(value);
           this.length = _.keys(current).length;
           if (value instanceof Smackbone.Model && (value._parent == null)) {
             value._parent = this;
@@ -235,6 +234,16 @@
           this.trigger('add', value, this, options);
         }
       }
+      this._indexToModel = (function() {
+        var _ref2, _results;
+        _ref2 = this._properties;
+        _results = [];
+        for (n in _ref2) {
+          v = _ref2[n];
+          _results.push(v);
+        }
+        return _results;
+      }).call(this);
       for (_i = 0, _len = changedPropertyNames.length; _i < _len; _i++) {
         changeName = changedPropertyNames[_i];
         this.trigger("change:" + changeName, current[changeName], this, options);
@@ -308,12 +317,20 @@
     };
 
     Model.prototype.unset = function(key, options) {
-      var index, model, _ref, _ref1;
+      var model, n, v, _ref, _ref1;
       key = (_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key;
       model = this._properties[key];
-      index = _.indexOf(this._indexToModel, model);
-      this._indexToModel.splice(index, 1);
       delete this._properties[key];
+      this._indexToModel = (function() {
+        var _ref2, _results;
+        _ref2 = this._properties;
+        _results = [];
+        for (n in _ref2) {
+          v = _ref2[n];
+          _results.push(v);
+        }
+        return _results;
+      }).call(this);
       this.length = _.keys(this._properties).length;
       if (model != null) {
         if (typeof model.trigger === "function") {

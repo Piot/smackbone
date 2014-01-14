@@ -1,6 +1,5 @@
 
 	class Smackbone.Model extends Smackbone.Event
-
 		constructor: (attributes, options) ->
 			@_properties = {}
 			@cid = _.uniqueId 'm'
@@ -73,7 +72,6 @@
 					if not (value instanceof Smackbone.Model)
 						value = @_createModelFromName name, value
 					current[name] = value
-					@_indexToModel.push value
 					@length = _.keys(current).length
 
 					if value instanceof Smackbone.Model and not value._parent?
@@ -82,6 +80,8 @@
 							value[@idAttribute] = name
 
 					@trigger 'add', value, @, options
+
+			@_indexToModel = (v for n, v of @_properties)
 
 			for changeName in changedPropertyNames
 				@trigger "change:#{changeName}", current[changeName], @, options
@@ -128,9 +128,8 @@
 		unset: (key, options) ->
 			key = key[@idAttribute] ? key.cid ? key
 			model = @_properties[key]
-			index = _.indexOf @_indexToModel, model
-			@_indexToModel.splice index, 1
 			delete @_properties[key]
+			@_indexToModel = (v for n, v of @_properties)
 			@length = _.keys(@_properties).length
 			model?.trigger? 'unset', model, @, options
 			@trigger 'remove', model, @, options

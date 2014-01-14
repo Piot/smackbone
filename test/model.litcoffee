@@ -393,3 +393,12 @@
 			@model.set 'something', 44,
 				sender: 'me'
 
+		it 'should overwrite existing models on multiple set', ->
+			@model._indexToModel.length.should.equal 0
+			@model.set 'number', 32
+			@model._indexToModel.length.should.equal 1
+			@model._indexToModel[0].should.equal 32
+
+			@model.set 'number', 64
+			@model._indexToModel.length.should.equal 1
+			@model._indexToModel[0].should.equal 64
