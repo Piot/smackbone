@@ -70,30 +70,54 @@ Returns an object literal containing the attributes.
 		
 		cat.toJSON()
 
-#### Collection
+## Collection
+An ordered set of models. It fires add and remove events when adding and removing. You can populate it by adding single models, arrays of objects or model hierarchies. It inherits from `Model`, so all functions available on `Model` can be called on a `Collection`.
+
+		collection = new smackbone.Collection();
+		model = new smackbone.Model();
+		
+**add** `add(model)`
+Adds the model to the collection. The key used is the .id attribute if it is present, otherwise the internal .cid attribute.
+
+**remove** `remove(model)`
+Removes the model from the collection.
+		
 **each** `each(func)`
-Calls the function for each object stored with set.
-
-*Example*
-
-		cat.each(function(object) {
-			console.log("object:", object);
-		});
+Calls the function for each model stored with set.
 
 **contains** `contains(attribute)`
-Checks if the specified attribute or id is stored in the model.
+Checks if the specified model or id is stored in the collection.
 
 **isEmpty** `isEmpty()`
 Returns true if it doesn't contain any objects.
 
 **at** `at(index)`
-Fetches an object from the index (in the order that they were set or added).
+Fetches an object at the given index (in the order that they were set or added).
 
 **first** `first()`
 Returns the first object stored in the model.
 
 **last** `last()`
 Returns the last object stored in the model.
+
+		@collection.add(model);
+		
+		@collection.remove(model);
+
+		collection.each(function(object) {
+			console.log("object:", object);
+		});
+		
+		collection.contains(model);
+		
+		collection.isEmpty();
+		
+		collection.at(0);
+		
+		collection.first();
+		
+		collection.last();
+		
 
 #### Sync
 
@@ -110,15 +134,6 @@ Destroys the model in the backend.
 
 **toJSON** `toJSON()`
 Returns a copy of the stored objects that is useful for serialization (e.g. JSON.stringify).
-
-### Collection
-Inherits from `Model`, so all functions available on `Model` can be called on a `Collection`.
-
-**add** `add(model)`
-Adds the model to the collection. The key used is the .id attribute if it is present, otherwise the internal .cid attribute.
-
-**remove** `remove(model)`
-Removes the model from the collection.
 
 ### Syncer
 Performs sync to and from the backend. The sync commands are `fetch`, `save` and `destroy`.
