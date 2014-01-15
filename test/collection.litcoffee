@@ -269,7 +269,7 @@
 Not so sure about the usefulness of adding objects to a collection where their id is unknown.
 You can not lookup a specific object after it is added, only enumerate the collection.
 
-		it 'should possible to add simple object without id to collection', (done) ->
+		it 'should be possible to add a simple object without id to collection', (done) ->
 			@collection.add
 				test: 42
 				name: 'something'
@@ -406,3 +406,8 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			model.get('id').should.equal 6
 			model.id.should.equal 6
 			@collection.get(6).should.equal model
+
+		it 'should answer if its empty or not', ->
+			@collection.isEmpty().should.be.true
+			@collection.add smackbone.Model()
+			@collection.isEmpty().should.be.false
