@@ -221,11 +221,15 @@
 			model = @collection.create
 				name: 'ambulance'
 
-		it 'should check contains', ->
+		it 'should be able to check if it contains models or model ids', ->
 			model = new smackbone.Model
+				id: 1
+
 			@collection.contains(model).should.be.false
 			@collection.add model
 			@collection.contains(model).should.be.true
+			@collection.contains(1).should.be.true
+			@collection.contains(2).should.be.false
 
 		it 'should not overwrite sub models from collection model class', ->
 			class WrongClass extends smackbone.Model
