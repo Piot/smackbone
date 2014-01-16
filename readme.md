@@ -35,8 +35,6 @@ Triggers the callbacks for the specified event.
 		emitter.off 'event'
 
 ## Model
-		class Cat extends smackbone.Model
-		cat = new Cat
 
 **set** `set(attributes, [options])`
 Sets the attributes according to input.
@@ -47,7 +45,7 @@ Unsets all objects and performs a set with the attributes. See `set` function.
 **reset** `reset(attributes, [options])`
 
 **get** `get(attribute)`
-Returns the object with the specified attribute or id.
+Returns the value of the given attribute.
 
 **path** `path()`
 Returns the relative path for the model.
@@ -58,23 +56,36 @@ Returns a new but identical object.
 **toJSON** `toJSON`
 Returns an object literal containing the attributes.
 
-		cat.set("name", "Ella");
-		cat.set({name: "Ella"});
+**fetch** `fetch()`
+Fetches the model from the backend (using one or more `Syncer`s). Triggers a GET request to the server.
 
-		cat.unset("name");
+**save** `save()`
+Saves the model to the backend. Triggers a POST or PUT request to the server.
 
-		cat.get("name");
-		cat.get(1337);
+**destroy** `destroy()`
+Destroys the model in the backend. Triggers a DELETE request to the server.
+
+		sheep = new smackbone.Model();
+
+		sheep.set("name", "Shaun");
+		sheep.set({name: "Shaun", material: "Clay"});
+
+		sheep.unset("name");
+
+		sheep.get("name");
 		
-		catClone = cat.clone();
+		dolly = sheep.clone();
 		
-		cat.toJSON()
+		dolly.toJSON();
+		
+		sheep.fetch();
+		
+		sheep.save();
+		
+		sheep.destroy();
 
 ## Collection
 An ordered set of models. It fires add and remove events when adding and removing. You can populate it by adding single models, arrays of objects or model hierarchies. It inherits from `Model`, so all functions available on `Model` can be called on a `Collection`.
-
-		collection = new smackbone.Collection();
-		model = new smackbone.Model();
 		
 **add** `add(model)`
 Adds the model to the collection. The key used is the .id attribute if it is present, otherwise the internal .cid attribute.
@@ -100,6 +111,12 @@ Returns the first object stored in the model.
 **last** `last()`
 Returns the last object stored in the model.
 
+**toJSON** `toJSON()`
+Returns a copy of the stored objects that is useful for serialization (e.g. JSON.stringify).
+
+		collection = new smackbone.Collection();
+		model = new smackbone.Model();
+
 		@collection.add(model);
 		
 		@collection.remove(model);
@@ -118,27 +135,10 @@ Returns the last object stored in the model.
 		
 		collection.last();
 		
+		collection.toJSON();
 
-#### Sync
-
-**fetch** `fetch()`
-Fetches the model from the backend (using one or more `Syncer`s).
-
-**save** `save()`
-Saves the model to the backend.
-
-**destroy** `destroy()`
-Destroys the model in the backend.
-
-#### Other
-
-**toJSON** `toJSON()`
-Returns a copy of the stored objects that is useful for serialization (e.g. JSON.stringify).
-
-### Syncer
+## Syncer
 Performs sync to and from the backend. The sync commands are `fetch`, `save` and `destroy`.
-
-*Example*
 
 	cat = new Model({id:42});
 	var syncer = new Syncer({model: cat});
