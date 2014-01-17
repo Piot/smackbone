@@ -7,34 +7,15 @@
 
 An attempt to make a more object oriented model framework.
 
-## Installation
+# Installation
 
 		npm install smackbone
 
 # Usage
-
-## Event
-Use to enable triggering and binding of custom events.
-
-		class EventEmitter extends smackbone.Event
-		emitter = new EventEmitter
-
-
-**on** `on("event", callback)`
-Adds the callback for the specified event. The event string can contain multiple space-separated event names.
-
-
-**off** `off([event], [callback])`
-Removes the callback for the specified event. If no callback is specified, then all callbacks for that event is removed. If event isn't specified, all callbacks are removed for this object.
-
-**trigger** `trigger("event"[,args...])`
-Triggers the callbacks for the specified event.
-
-		emitter.on 'event', (data) ->
-		emitter.trigger 'event'
-		emitter.off 'event'
+		smackbone = require("smackbone"); // AMD or CommonJS
 
 ## Model
+Should hold the data (attributes) of the application. When a attribute is changed, it fires a change event and a keyed change event. It has support for transient properties.
 
 **set** `set(attributes, [options])`
 Sets the attributes according to input.
@@ -75,6 +56,7 @@ Destroys the model in the backend. Triggers a DELETE request to the server.
 		sheep.get("name");
 		
 		dolly = sheep.clone();
+		dolly.set("name", "Dolly");
 		
 		dolly.toJSON();
 		
@@ -136,6 +118,29 @@ Returns a copy of the stored objects that is useful for serialization (e.g. JSON
 		collection.last();
 		
 		collection.toJSON();
+
+## Event
+Use to enable triggering and binding of custom events.
+
+		class EventEmitter extends smackbone.Event
+		emitter = new EventEmitter
+
+
+**on** `on("event", callback)`
+Adds the callback for the specified event. The event string can contain multiple space-separated event names.
+
+
+**off** `off([event], [callback])`
+Removes the callback for the specified event. If no callback is specified, then all callbacks for that event is removed. If event isn't specified, all callbacks are removed for this object.
+
+**trigger** `trigger("event"[,args...])`
+Triggers the callbacks for the specified event.
+
+		emitter.on("event", function(data) {
+			console.log("data:", data);
+		});
+		emitter.trigger("event");
+		emitter.off("event");
 
 ## Syncer
 Performs sync to and from the backend. The sync commands are `fetch`, `save` and `destroy`.
