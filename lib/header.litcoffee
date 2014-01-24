@@ -14,4 +14,3 @@
 		_ = root._
 		Smackbone = root.Smackbone = {}
 		Smackbone.$ = root.$
-

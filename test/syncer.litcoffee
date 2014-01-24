@@ -46,7 +46,6 @@
 			@root.fetch
 				secret: '1442'
 
-
 		it 'should report save request (PUT)', (done) ->
 			@root.id = 2
 			@syncer.on 'request', (options) ->

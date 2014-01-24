@@ -1,5 +1,4 @@
 
-
 	class Smackbone.Event
 		trigger: (name, args...) ->
 			events = @_events?[name]

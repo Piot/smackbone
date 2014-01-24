@@ -1,6 +1,5 @@
 
 	class Smackbone.Syncer extends Smackbone.Event
-
 		constructor: (options) ->
 			@root = options.model
 			@root.on 'fetch_request', @_onFetchRequest
@@ -9,7 +8,7 @@
 
 		_onFetchRequest: (path, model, queryObject, options) =>
 			options = options ? {}
-			request = 
+			request =
 				type: 'GET'
 				done: (response) =>
 					method = if options.reset then 'reset' else 'set'
@@ -43,7 +42,7 @@
 				options.data = undefined
 			else
 				options.data = JSON.stringify options.data?.toJSON()
-			
+
 			options.contentType = 'application/json'
 			@trigger 'request', options
 			Smackbone.$.ajax(options).done options.done
