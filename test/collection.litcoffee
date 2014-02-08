@@ -407,7 +407,22 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			model.id.should.equal 6
 			@collection.get(6).should.equal model
 
-		it 'should answer if its empty or not', ->
-			@collection.isEmpty().should.be.true
-			@collection.add smackbone.Model()
-			@collection.isEmpty().should.be.false
+		describe 'isEmpty', ->
+			it 'should respond if its empty or not', ->
+				@collection.isEmpty().should.be.true
+				@collection.add smackbone.Model()
+				@collection.isEmpty().should.be.false
+
+		describe 'toJSON', ->
+			it 'should respond with a correct object literal representation', ->
+				leo = 
+					name: 'Leo'
+					gender: 'male'
+				noah = 
+					name: 'Noah'
+					gender: 'male'
+				@collection.add leo
+				@collection.add noah
+
+				json = JSON.stringify @collection.toJSON()
+				json.should.eql '[{"name":"Leo","gender":"male"},{"name":"Noah","gender":"male"}]'
