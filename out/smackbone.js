@@ -1,5 +1,5 @@
 (function() {
-  var Smackbone, root, _, _ref,
+  var Smackbone, root, _,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -178,7 +178,7 @@
       var o;
       o = this.get(currentId);
       if (o == null) {
-        throw new ("Id '" + currentId + "' didn't exist.");
+        throw new Error("Id '" + currentId + "' didn't exist.");
       }
       this.unset(currentId);
       return this.set(nextId, o);
@@ -427,8 +427,7 @@
     __extends(Collection, _super);
 
     function Collection() {
-      _ref = Collection.__super__.constructor.apply(this, arguments);
-      return _ref;
+      return Collection.__super__.constructor.apply(this, arguments);
     }
 
     Collection.prototype.create = function(object) {
@@ -440,7 +439,7 @@
     };
 
     Collection.prototype.set = function(key, value) {
-      var array, attributes, id, o, _i, _len, _ref1, _ref2;
+      var array, attributes, id, o, _i, _len, _ref, _ref1;
       if (typeof key === 'object') {
         if (_.isEmpty(key)) {
           return;
@@ -449,10 +448,10 @@
         attributes = {};
         for (_i = 0, _len = array.length; _i < _len; _i++) {
           o = array[_i];
-          id = (_ref1 = o[this.idAttribute]) != null ? _ref1 : o.cid;
+          id = (_ref = o[this.idAttribute]) != null ? _ref : o.cid;
           if (id == null) {
             o = this._createModelFromName(void 0, o, Smackbone.Model);
-            id = (_ref2 = o[this.idAttribute]) != null ? _ref2 : o.cid;
+            id = (_ref1 = o[this.idAttribute]) != null ? _ref1 : o.cid;
           }
           if (o instanceof Smackbone.Model) {
             if (o._parent == null) {
@@ -489,42 +488,45 @@
     }
 
     Syncer.prototype._onFetchRequest = function(path, model, queryObject, options) {
-      var request,
-        _this = this;
+      var request;
       options = options != null ? options : {};
       request = {
         type: 'GET',
-        done: function(response) {
-          var method;
-          method = options.reset ? 'reset' : 'set';
-          return model[method](response);
-        }
+        done: (function(_this) {
+          return function(response) {
+            var method;
+            method = options.reset ? 'reset' : 'set';
+            return model[method](response);
+          };
+        })(this)
       };
       return this._request(request, path, queryObject);
     };
 
     Syncer.prototype._onSaveRequest = function(path, model) {
-      var options,
-        _this = this;
+      var options;
       options = {
         type: model.isNew() ? 'POST' : 'PUT',
         data: model,
-        done: function(response) {
-          return model.set(response);
-        }
+        done: (function(_this) {
+          return function(response) {
+            return model.set(response);
+          };
+        })(this)
       };
       return this._request(options, path);
     };
 
     Syncer.prototype._onDestroyRequest = function(path, model) {
-      var options,
-        _this = this;
+      var options;
       options = {
         type: 'DELETE',
         data: model,
-        done: function(response) {
-          return model.reset();
-        }
+        done: (function(_this) {
+          return function(response) {
+            return model.reset();
+          };
+        })(this)
       };
       return this._request(options, path);
     };
@@ -548,13 +550,13 @@
     };
 
     Syncer.prototype._request = function(options, path, queryObject) {
-      var queryString, _ref1, _ref2;
+      var queryString, _ref, _ref1;
       queryString = this._encodeQueryObject(queryObject);
-      options.url = ((_ref1 = this.urlRoot) != null ? _ref1 : '') + path + queryString;
+      options.url = ((_ref = this.urlRoot) != null ? _ref : '') + path + queryString;
       if (options.type === 'GET') {
         options.data = void 0;
       } else {
-        options.data = JSON.stringify((_ref2 = options.data) != null ? _ref2.toJSON() : void 0);
+        options.data = JSON.stringify((_ref1 = options.data) != null ? _ref1.toJSON() : void 0);
       }
       options.contentType = 'application/json';
       this.trigger('request', options);
