@@ -32,7 +32,7 @@
 
 		move: (currentId, nextId) ->
 			o = @get currentId
-			throw new "Id '#{currentId}' didn't exist." if not o?
+			throw new Error "Id '#{currentId}' didn't exist." if not o?
 			@unset currentId
 			@set nextId, o
 
