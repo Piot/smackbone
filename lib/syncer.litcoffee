@@ -13,6 +13,7 @@
 				done: (response) =>
 					method = if options.reset then 'reset' else 'set'
 					model[method] response
+			_.extend request, options
 			@_request request, path, queryObject
 
 		_onSaveRequest: (path, model) =>

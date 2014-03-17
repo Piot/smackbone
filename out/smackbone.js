@@ -500,6 +500,7 @@
           };
         })(this)
       };
+      _.extend(request, options);
       return this._request(request, path, queryObject);
     };
 
