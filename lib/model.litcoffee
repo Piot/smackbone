@@ -56,6 +56,7 @@
 			previous = @_previousProperties
 
 			changedPropertyNames = []
+			addedAttributes = []
 			@changed = {}
 
 			for name, value of attributes
@@ -78,10 +79,12 @@
 						value._parent = @
 						if not value[@idAttribute]?
 							value[@idAttribute] = name
-
-					@trigger 'add', value, @, options
+					addedAttributes.push value
 
 			@_indexToModel = (v for n, v of @_properties)
+
+			for value in addedAttributes
+				@trigger 'add', value, @, options
 
 			for changeName in changedPropertyNames
 				@trigger "change:#{changeName}", current[changeName], @, options

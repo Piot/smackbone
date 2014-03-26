@@ -185,7 +185,7 @@
     };
 
     Model.prototype.set = function(key, value, options) {
-      var attributes, changeName, changedPropertyNames, current, existingObject, n, name, oldId, previous, v, _i, _len, _ref, _ref1;
+      var addedAttributes, attributes, changeName, changedPropertyNames, current, existingObject, n, name, oldId, previous, v, _i, _j, _len, _len1, _ref, _ref1;
       if (key == null) {
         throw new Error('can not set with undefined');
       }
@@ -207,6 +207,7 @@
       current = this._properties;
       previous = this._previousProperties;
       changedPropertyNames = [];
+      addedAttributes = [];
       this.changed = {};
       for (name in attributes) {
         value = attributes[name];
@@ -231,7 +232,7 @@
               value[this.idAttribute] = name;
             }
           }
-          this.trigger('add', value, this, options);
+          addedAttributes.push(value);
         }
       }
       this._indexToModel = (function() {
@@ -244,8 +245,12 @@
         }
         return _results;
       }).call(this);
-      for (_i = 0, _len = changedPropertyNames.length; _i < _len; _i++) {
-        changeName = changedPropertyNames[_i];
+      for (_i = 0, _len = addedAttributes.length; _i < _len; _i++) {
+        value = addedAttributes[_i];
+        this.trigger('add', value, this, options);
+      }
+      for (_j = 0, _len1 = changedPropertyNames.length; _j < _len1; _j++) {
+        changeName = changedPropertyNames[_j];
         this.trigger("change:" + changeName, current[changeName], this, options);
       }
       if (changedPropertyNames.length > 0) {
