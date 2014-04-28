@@ -402,3 +402,17 @@
 			@model.set 'number', 64
 			@model._indexToModel.length.should.equal 1
 			@model._indexToModel[0].should.equal 64
+
+		it 'should remove if triggerRemove is set', (done) ->
+			@model.set
+				id: 3
+				propertyOne: 1
+				propertyTwo: 'hi'
+
+			@model.on 'remove', (model, self, propertyName) ->
+				done() if propertyName is 'propertyOne'
+
+			@model.set
+				id: 3
+				propertyTwo: 'hi'
+			, {triggerRemove: true}

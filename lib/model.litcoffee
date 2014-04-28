@@ -57,7 +57,12 @@
 
 			changedPropertyNames = []
 			addedAttributes = []
+			removedAttributes = []
 			@changed = {}
+
+			for name, value of @_properties
+				if not attributes[name]?
+					removedAttributes.push name
 
 			for name, value of attributes
 				if !_.isEqual current[name], value
@@ -90,6 +95,10 @@
 				@trigger "change:#{changeName}", current[changeName], @, options
 
 			@trigger 'change', @, options if changedPropertyNames.length > 0
+
+			if options?.triggerRemove
+				for value in removedAttributes
+					@unset value
 
 		contains: (key) ->
 			@get(key)?
@@ -135,7 +144,7 @@
 			@_indexToModel = (v for n, v of @_properties)
 			@length = _.keys(@_properties).length
 			model?.trigger? 'unset', model, @, options
-			@trigger 'remove', model, @, options
+			@trigger 'remove', model, @, key, options
 
 		path: ->
 			if @_parent? then "#{@_parent.path()}/#{@[@idAttribute] ? ''}" else @rootPath ? ''

@@ -185,7 +185,7 @@
     };
 
     Model.prototype.set = function(key, value, options) {
-      var addedAttributes, attributes, changeName, changedPropertyNames, current, existingObject, n, name, oldId, previous, v, _i, _j, _len, _len1, _ref, _ref1;
+      var addedAttributes, attributes, changeName, changedPropertyNames, current, existingObject, n, name, oldId, previous, removedAttributes, v, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
       if (key == null) {
         throw new Error('can not set with undefined');
       }
@@ -208,7 +208,15 @@
       previous = this._previousProperties;
       changedPropertyNames = [];
       addedAttributes = [];
+      removedAttributes = [];
       this.changed = {};
+      _ref1 = this._properties;
+      for (name in _ref1) {
+        value = _ref1[name];
+        if (attributes[name] == null) {
+          removedAttributes.push(name);
+        }
+      }
       for (name in attributes) {
         value = attributes[name];
         if (!_.isEqual(current[name], value)) {
@@ -217,7 +225,7 @@
         if (!_.isEqual(previous[name], value)) {
           this.changed[name] = value;
         }
-        if ((((_ref1 = current[name]) != null ? _ref1.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {
+        if ((((_ref2 = current[name]) != null ? _ref2.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {
           existingObject = current[name];
           existingObject.set(value);
         } else {
@@ -236,11 +244,11 @@
         }
       }
       this._indexToModel = (function() {
-        var _ref2, _results;
-        _ref2 = this._properties;
+        var _ref3, _results;
+        _ref3 = this._properties;
         _results = [];
-        for (n in _ref2) {
-          v = _ref2[n];
+        for (n in _ref3) {
+          v = _ref3[n];
           _results.push(v);
         }
         return _results;
@@ -254,7 +262,15 @@
         this.trigger("change:" + changeName, current[changeName], this, options);
       }
       if (changedPropertyNames.length > 0) {
-        return this.trigger('change', this, options);
+        this.trigger('change', this, options);
+      }
+      if (options != null ? options.triggerRemove : void 0) {
+        _results = [];
+        for (_k = 0, _len2 = removedAttributes.length; _k < _len2; _k++) {
+          value = removedAttributes[_k];
+          _results.push(this.unset(value));
+        }
+        return _results;
       }
     };
 
@@ -342,7 +358,7 @@
           model.trigger('unset', model, this, options);
         }
       }
-      return this.trigger('remove', model, this, options);
+      return this.trigger('remove', model, this, key, options);
     };
 
     Model.prototype.path = function() {
