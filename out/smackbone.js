@@ -227,7 +227,7 @@
         }
         if ((((_ref2 = current[name]) != null ? _ref2.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {
           existingObject = current[name];
-          existingObject.set(value);
+          existingObject.set(value, options);
         } else {
           if (!(value instanceof Smackbone.Model)) {
             value = this._createModelFromName(name, value);
@@ -459,7 +459,7 @@
       return model;
     };
 
-    Collection.prototype.set = function(key, value) {
+    Collection.prototype.set = function(key, value, options) {
       var array, attributes, id, o, _i, _len, _ref, _ref1;
       if (typeof key === 'object') {
         if (_.isEmpty(key)) {
@@ -467,6 +467,7 @@
         }
         array = _.isArray(key) ? array = key : array = [key];
         attributes = {};
+        options = value;
         for (_i = 0, _len = array.length; _i < _len; _i++) {
           o = array[_i];
           id = (_ref = o[this.idAttribute]) != null ? _ref : o.cid;
@@ -484,7 +485,7 @@
       } else {
         (attributes = {})[key] = value;
       }
-      return Collection.__super__.set.call(this, attributes);
+      return Collection.__super__.set.call(this, attributes, options);
     };
 
     Collection.prototype.toJSON = function() {

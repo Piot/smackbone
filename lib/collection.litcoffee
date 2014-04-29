@@ -9,7 +9,7 @@
 
 If the receiver is a collection, then it uses the id of the objects to set the properties.
 
-		set: (key, value) ->
+		set: (key, value, options) ->
 			if typeof key is 'object'
 
 Todo: Should make test to make sure why checking for isEmpty is needed for some situations
@@ -18,6 +18,7 @@ Todo: Should make test to make sure why checking for isEmpty is needed for some 
 
 				array = if _.isArray key then array = key else array = [key]
 				attributes = {}
+				options = value
 				for o in array
 					id = o[@idAttribute] ? o.cid
 					if not id?
@@ -30,7 +31,7 @@ Todo: Should make test to make sure why checking for isEmpty is needed for some 
 			else
 				(attributes = {})[key] = value
 
-			super attributes
+			super attributes, options
 
 		toJSON: ->
 			_.toArray super()

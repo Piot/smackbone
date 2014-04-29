@@ -73,7 +73,7 @@
 
 				if current[name]?.set? and not (value instanceof Smackbone.Model) and value?
 					existingObject = current[name]
-					existingObject.set value
+					existingObject.set value, options
 				else
 					if not (value instanceof Smackbone.Model)
 						value = @_createModelFromName name, value
