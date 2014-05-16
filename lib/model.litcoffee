@@ -88,13 +88,14 @@
 
 			@_indexToModel = (v for n, v of @_properties)
 
-			for value in addedAttributes
-				@trigger 'add', value, @, options
+			unless options?.silent
+				for value in addedAttributes
+					@trigger 'add', value, @, options
 
-			for changeName in changedPropertyNames
-				@trigger "change:#{changeName}", current[changeName], @, options
+				for changeName in changedPropertyNames
+					@trigger "change:#{changeName}", current[changeName], @, options
 
-			@trigger 'change', @, options if changedPropertyNames.length > 0
+				@trigger 'change', @, options if changedPropertyNames.length > 0
 
 			if options?.triggerRemove
 				for value in removedAttributes

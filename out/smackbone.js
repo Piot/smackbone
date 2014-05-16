@@ -253,16 +253,18 @@
         }
         return _results;
       }).call(this);
-      for (_i = 0, _len = addedAttributes.length; _i < _len; _i++) {
-        value = addedAttributes[_i];
-        this.trigger('add', value, this, options);
-      }
-      for (_j = 0, _len1 = changedPropertyNames.length; _j < _len1; _j++) {
-        changeName = changedPropertyNames[_j];
-        this.trigger("change:" + changeName, current[changeName], this, options);
-      }
-      if (changedPropertyNames.length > 0) {
-        this.trigger('change', this, options);
+      if (!(options != null ? options.silent : void 0)) {
+        for (_i = 0, _len = addedAttributes.length; _i < _len; _i++) {
+          value = addedAttributes[_i];
+          this.trigger('add', value, this, options);
+        }
+        for (_j = 0, _len1 = changedPropertyNames.length; _j < _len1; _j++) {
+          changeName = changedPropertyNames[_j];
+          this.trigger("change:" + changeName, current[changeName], this, options);
+        }
+        if (changedPropertyNames.length > 0) {
+          this.trigger('change', this, options);
+        }
       }
       if (options != null ? options.triggerRemove : void 0) {
         _results = [];

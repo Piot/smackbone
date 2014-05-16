@@ -407,6 +407,18 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			model.id.should.equal 6
 			@collection.get(6).should.equal model
 
+		it 'should not trigger anything if silent is set', (done) ->
+			@collection.on 'all', (e) ->
+				done 'should not fire'
+
+			data =
+				name: 'hello, world'
+			options =
+				silent: true
+			@collection.set [data], options
+
+			done()
+
 		describe 'isEmpty', ->
 			it 'should respond if its empty or not', ->
 				@collection.isEmpty().should.be.true
@@ -415,10 +427,10 @@ You can not lookup a specific object after it is added, only enumerate the colle
 
 		describe 'toJSON', ->
 			it 'should respond with a correct object literal representation', ->
-				leo = 
+				leo =
 					name: 'Leo'
 					gender: 'male'
-				noah = 
+				noah =
 					name: 'Noah'
 					gender: 'male'
 				@collection.add leo

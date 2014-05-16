@@ -416,3 +416,16 @@
 				id: 3
 				propertyTwo: 'hi'
 			, {triggerRemove: true}
+
+		it 'should not trigger anything if silent is set', (done) ->
+			@model.on 'all', ->
+				console.log 'change'
+				done 'should not fire'
+
+			data =
+				name: 'hello, world'
+			options =
+				silent: true
+			@model.set data, options
+
+			done()
