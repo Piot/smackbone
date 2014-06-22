@@ -1,9 +1,8 @@
-	     _______..___  ___.      ___       ______  __  ___ .______     ______   .__   __.  _______
-	    /       ||   \/   |     /   \     /      ||  |/  / |   _  \   /  __  \  |  \ |  | |   ____|
-	   |   (----`|  \  /  |    /  ^  \   |  ,----'|  '  /  |  |_)  | |  |  |  | |   \|  | |  |__
-	    \   \    |  |\/|  |   /  /_\  \  |  |     |    <   |   _  <  |  |  |  | |  . `  | |   __|
-	.----)   |   |  |  |  |  /  _____  \ |  `----.|  .  \  |  |_)  | |  `--'  | |  |\   | |  |____
-	|_______/    |__|  |__| /__/     \__\ \______||__|\__\ |______/   \______/  |__| \__| |_______|
+  ____                       _    _                      
+ / ___| _ __ ___   __ _  ___| | _| |__   ___  _ __   ___
+ \___ \| '_ ` _ \ / _` |/ __| |/ / '_ \ / _ \| '_ \ / _ \
+  ___) | | | | | | (_| | (__|   <| |_) | (_) | | | |  __/
+ |____/|_| |_| |_|\__,_|\___|_|\_\_.__/ \___/|_| |_|\___|
 
 An attempt to make a more object oriented model framework.
 
@@ -54,27 +53,27 @@ Destroys the model in the backend. Triggers a DELETE request to the server.
 		sheep.unset("name");
 
 		sheep.get("name");
-		
+
 		dolly = sheep.clone();
 		dolly.set("name", "Dolly");
-		
+
 		dolly.toJSON();
-		
+
 		sheep.fetch();
-		
+
 		sheep.save();
-		
+
 		sheep.destroy();
 
 ## Collection
 An ordered set of models. It fires add and remove events when adding and removing. You can populate it by adding single models, arrays of objects or model hierarchies. It inherits from `Model`, so all functions available on `Model` can be called on a `Collection`.
-		
+
 **add** `add(model)`
 Adds the model to the collection. The key used is the .id attribute if it is present, otherwise the internal .cid attribute.
 
 **remove** `remove(model)`
 Removes the model from the collection.
-		
+
 **each** `each(func)`
 Calls the function for each model stored with set.
 
@@ -100,23 +99,23 @@ Returns a copy of the stored objects that is useful for serialization (e.g. JSON
 		model = new smackbone.Model();
 
 		@collection.add(model);
-		
+
 		@collection.remove(model);
 
 		collection.each(function(object) {
 			console.log("object:", object);
 		});
-		
+
 		collection.contains(model);
-		
+
 		collection.isEmpty();
-		
+
 		collection.at(0);
-		
+
 		collection.first();
-		
+
 		collection.last();
-		
+
 		collection.toJSON();
 
 ## Event
