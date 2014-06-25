@@ -68,6 +68,9 @@ Destroys the model in the backend. Triggers a DELETE request to the server.
 ## Collection
 An ordered set of models. It fires add and remove events when adding and removing. You can populate it by adding single models, arrays of objects or model hierarchies. It inherits from `Model`, so all functions available on `Model` can be called on a `Collection`.
 
+**get** `get(model|cid|id)`
+Fetches a model from the collection, specified by an id, a cid, or a model.
+
 **add** `add(model)`
 Adds the model to the collection. The key used is the .id attribute if it is present, otherwise the internal .cid attribute.
 
