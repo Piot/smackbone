@@ -419,6 +419,13 @@ You can not lookup a specific object after it is added, only enumerate the colle
 
 			done()
 
+		it 'should handle an empty array replacement', ->
+			@collection.add {id:43, something: 'world'}
+			@collection.should.have.length 1
+			@collection.get(43).something.should.equal 'world'
+			@collection.set []
+			@collection.should.have.length 0
+
 		describe 'isEmpty', ->
 			it 'should respond if its empty or not', ->
 				@collection.isEmpty().should.be.true

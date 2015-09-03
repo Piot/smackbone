@@ -1,9 +1,9 @@
 (function() {
-  var Smackbone, root, _,
-    __slice = [].slice,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var Smackbone, _, root,
+    slice = [].slice,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   if (typeof exports !== "undefined" && exports !== null) {
     Smackbone = exports;
@@ -27,21 +27,21 @@
     function Event() {}
 
     Event.prototype.trigger = function() {
-      var allEvents, args, events, name, _ref, _ref1;
-      name = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      events = (_ref = this._events) != null ? _ref[name] : void 0;
+      var allEvents, args, events, name, ref, ref1;
+      name = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+      events = (ref = this._events) != null ? ref[name] : void 0;
       if (events != null) {
-        this._triggerEvents.apply(this, [events].concat(__slice.call(args)));
+        this._triggerEvents.apply(this, [events].concat(slice.call(args)));
       }
-      allEvents = (_ref1 = this._events) != null ? _ref1.all : void 0;
+      allEvents = (ref1 = this._events) != null ? ref1.all : void 0;
       if (allEvents != null) {
-        this._triggerEvents.apply(this, [allEvents, name].concat(__slice.call(args)));
+        this._triggerEvents.apply(this, [allEvents, name].concat(slice.call(args)));
       }
       return this;
     };
 
     Event.prototype.on = function(names, callback) {
-      var events, name, nameArray, _i, _len;
+      var events, j, len, name, nameArray;
       if (this._events == null) {
         this._events = {};
       }
@@ -52,8 +52,8 @@
         throw new Error('Illegal event name');
       }
       nameArray = names.split(' ');
-      for (_i = 0, _len = nameArray.length; _i < _len; _i++) {
-        name = nameArray[_i];
+      for (j = 0, len = nameArray.length; j < len; j++) {
+        name = nameArray[j];
         events = this._events[name] || (this._events[name] = []);
         events.push({
           callback: callback,
@@ -64,7 +64,7 @@
     };
 
     Event.prototype.off = function(name, callback) {
-      var event, events, key, names, newEvents, _i, _j, _k, _len, _len1, _len2, _ref, _ref1;
+      var event, events, j, k, key, l, len, len1, len2, names, newEvents, ref, ref1;
       if (this._events == null) {
         this._events = {};
       }
@@ -72,26 +72,26 @@
         this._events = {};
         return this;
       }
-      _ref = name.split(' ');
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        name = _ref[_i];
-        events = (_ref1 = this._events[name]) != null ? _ref1 : [];
+      ref = name.split(' ');
+      for (j = 0, len = ref.length; j < len; j++) {
+        name = ref[j];
+        events = (ref1 = this._events[name]) != null ? ref1 : [];
         names = name ? [name] : (function() {
-          var _j, _len1, _ref2, _results;
-          _ref2 = this._events;
-          _results = [];
-          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-            key = _ref2[_j];
-            _results.push(key);
+          var k, len1, ref2, results;
+          ref2 = this._events;
+          results = [];
+          for (k = 0, len1 = ref2.length; k < len1; k++) {
+            key = ref2[k];
+            results.push(key);
           }
-          return _results;
+          return results;
         }).call(this);
-        for (_j = 0, _len1 = names.length; _j < _len1; _j++) {
-          name = names[_j];
+        for (k = 0, len1 = names.length; k < len1; k++) {
+          name = names[k];
           newEvents = [];
           this._events[name] = newEvents;
-          for (_k = 0, _len2 = events.length; _k < _len2; _k++) {
-            event = events[_k];
+          for (l = 0, len2 = events.length; l < len2; l++) {
+            event = events[l];
             if (callback !== event.callback) {
               newEvents.push(event);
             }
@@ -105,25 +105,25 @@
     };
 
     Event.prototype._triggerEvents = function() {
-      var args, event, events, _i, _len, _results;
-      events = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      _results = [];
-      for (_i = 0, _len = events.length; _i < _len; _i++) {
-        event = events[_i];
-        _results.push(event.callback.apply(event, args));
+      var args, event, events, j, len, results;
+      events = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+      results = [];
+      for (j = 0, len = events.length; j < len; j++) {
+        event = events[j];
+        results.push(event.callback.apply(event, args));
       }
-      return _results;
+      return results;
     };
 
     return Event;
 
   })();
 
-  Smackbone.Model = (function(_super) {
-    __extends(Model, _super);
+  Smackbone.Model = (function(superClass) {
+    extend(Model, superClass);
 
     function Model(attributes, options) {
-      var key, modelClass, _ref;
+      var key, modelClass, ref;
       this._properties = {};
       this.cid = _.uniqueId('m');
       this.length = 0;
@@ -134,9 +134,9 @@
         this.set(attributes);
       }
       if (this.models != null) {
-        _ref = this.models;
-        for (key in _ref) {
-          modelClass = _ref[key];
+        ref = this.models;
+        for (key in ref) {
+          modelClass = ref[key];
           if (!this.contains(key)) {
             this.set(key, new modelClass({}));
           }
@@ -165,8 +165,8 @@
     };
 
     Model.prototype._createModelFromName = function(name, value, backupClass) {
-      var modelClass, _ref, _ref1, _ref2, _ref3, _ref4;
-      modelClass = (_ref = (_ref1 = (_ref2 = (_ref3 = this.modelClasses) != null ? _ref3[value[this.classField]] : void 0) != null ? _ref2 : (_ref4 = this.models) != null ? _ref4[name] : void 0) != null ? _ref1 : this.model) != null ? _ref : backupClass;
+      var modelClass, ref, ref1, ref2, ref3, ref4;
+      modelClass = (ref = (ref1 = (ref2 = (ref3 = this.modelClasses) != null ? ref3[value[this.classField]] : void 0) != null ? ref2 : (ref4 = this.models) != null ? ref4[name] : void 0) != null ? ref1 : this.model) != null ? ref : backupClass;
       if (modelClass != null) {
         return new modelClass(value);
       } else {
@@ -185,7 +185,7 @@
     };
 
     Model.prototype.set = function(key, value, options) {
-      var addedAttributes, attributes, changeName, changedPropertyNames, current, existingObject, n, name, oldId, previous, removedAttributes, v, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
+      var addedAttributes, attributes, changeName, changedPropertyNames, current, existingObject, j, k, l, len, len1, len2, n, name, oldId, previous, ref, ref1, ref2, removedAttributes, results, v;
       if (key == null) {
         throw new Error('can not set with undefined');
       }
@@ -199,8 +199,8 @@
       if (attributes[this.idAttribute] != null) {
         oldId = this[this.idAttribute] || this.cid;
         this[this.idAttribute] = attributes[this.idAttribute];
-        if ((_ref = this._parent) != null) {
-          _ref.move(oldId, this[this.idAttribute]);
+        if ((ref = this._parent) != null) {
+          ref.move(oldId, this[this.idAttribute]);
         }
       }
       this._previousProperties = _.clone(this._properties);
@@ -210,9 +210,9 @@
       addedAttributes = [];
       removedAttributes = [];
       this.changed = {};
-      _ref1 = this._properties;
-      for (name in _ref1) {
-        value = _ref1[name];
+      ref1 = this._properties;
+      for (name in ref1) {
+        value = ref1[name];
         if (attributes[name] == null) {
           removedAttributes.push(name);
         }
@@ -225,7 +225,7 @@
         if (!_.isEqual(previous[name], value)) {
           this.changed[name] = value;
         }
-        if ((((_ref2 = current[name]) != null ? _ref2.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {
+        if ((((ref2 = current[name]) != null ? ref2.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {
           existingObject = current[name];
           existingObject.set(value, options);
         } else {
@@ -244,22 +244,22 @@
         }
       }
       this._indexToModel = (function() {
-        var _ref3, _results;
-        _ref3 = this._properties;
-        _results = [];
-        for (n in _ref3) {
-          v = _ref3[n];
-          _results.push(v);
+        var ref3, results;
+        ref3 = this._properties;
+        results = [];
+        for (n in ref3) {
+          v = ref3[n];
+          results.push(v);
         }
-        return _results;
+        return results;
       }).call(this);
       if (!(options != null ? options.silent : void 0)) {
-        for (_i = 0, _len = addedAttributes.length; _i < _len; _i++) {
-          value = addedAttributes[_i];
+        for (j = 0, len = addedAttributes.length; j < len; j++) {
+          value = addedAttributes[j];
           this.trigger('add', value, this, options);
         }
-        for (_j = 0, _len1 = changedPropertyNames.length; _j < _len1; _j++) {
-          changeName = changedPropertyNames[_j];
+        for (k = 0, len1 = changedPropertyNames.length; k < len1; k++) {
+          changeName = changedPropertyNames[k];
           this.trigger("change:" + changeName, current[changeName], this, options);
         }
         if (changedPropertyNames.length > 0) {
@@ -267,12 +267,12 @@
         }
       }
       if (options != null ? options.triggerRemove : void 0) {
-        _results = [];
-        for (_k = 0, _len2 = removedAttributes.length; _k < _len2; _k++) {
-          value = removedAttributes[_k];
-          _results.push(this.unset(value));
+        results = [];
+        for (l = 0, len2 = removedAttributes.length; l < len2; l++) {
+          value = removedAttributes[l];
+          results.push(this.unset(value));
         }
-        return _results;
+        return results;
       }
     };
 
@@ -289,18 +289,18 @@
     };
 
     Model.prototype.each = function(func) {
-      var key, value, _ref, _results;
-      _ref = this._properties;
-      _results = [];
-      for (key in _ref) {
-        value = _ref[key];
-        _results.push(func(value, key));
+      var key, ref, results, value;
+      ref = this._properties;
+      results = [];
+      for (key in ref) {
+        value = ref[key];
+        results.push(func(value, key));
       }
-      return _results;
+      return results;
     };
 
     Model.prototype.get = function(key) {
-      var id, model, parts, _i, _len, _ref, _ref1;
+      var id, j, len, model, parts, ref, ref1;
       if (key == null) {
         throw new Error('Must have a valid object for get()');
       }
@@ -310,8 +310,8 @@
         }
         parts = key.split('/');
         model = this;
-        for (_i = 0, _len = parts.length; _i < _len; _i++) {
-          id = parts[_i];
+        for (j = 0, len = parts.length; j < len; j++) {
+          id = parts[j];
           if (model == null) {
             throw new Error("Couldn't lookup '" + id + "' in '" + key + "'");
           }
@@ -323,7 +323,7 @@
         }
         return model;
       } else {
-        return this._properties[(_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key];
+        return this._properties[(ref = (ref1 = key[this.idAttribute]) != null ? ref1 : key.cid) != null ? ref : key];
       }
     };
 
@@ -340,19 +340,19 @@
     };
 
     Model.prototype.unset = function(key, options) {
-      var model, n, v, _ref, _ref1;
-      key = (_ref = (_ref1 = key[this.idAttribute]) != null ? _ref1 : key.cid) != null ? _ref : key;
+      var model, n, ref, ref1, v;
+      key = (ref = (ref1 = key[this.idAttribute]) != null ? ref1 : key.cid) != null ? ref : key;
       model = this._properties[key];
       delete this._properties[key];
       this._indexToModel = (function() {
-        var _ref2, _results;
-        _ref2 = this._properties;
-        _results = [];
-        for (n in _ref2) {
-          v = _ref2[n];
-          _results.push(v);
+        var ref2, results;
+        ref2 = this._properties;
+        results = [];
+        for (n in ref2) {
+          v = ref2[n];
+          results.push(v);
         }
-        return _results;
+        return results;
       }).call(this);
       this.length = _.keys(this._properties).length;
       if (model != null) {
@@ -364,18 +364,18 @@
     };
 
     Model.prototype.path = function() {
-      var _ref, _ref1;
+      var ref, ref1;
       if (this._parent != null) {
-        return "" + (this._parent.path()) + "/" + ((_ref = this[this.idAttribute]) != null ? _ref : '');
+        return (this._parent.path()) + "/" + ((ref = this[this.idAttribute]) != null ? ref : '');
       } else {
-        return (_ref1 = this.rootPath) != null ? _ref1 : '';
+        return (ref1 = this.rootPath) != null ? ref1 : '';
       }
     };
 
     Model.prototype._root = function() {
-      var i, model, _i;
+      var i, j, model;
       model = this;
-      for (i = _i = 0; _i <= 10; i = ++_i) {
+      for (i = j = 0; j <= 10; i = ++j) {
         if (model._parent == null) {
           break;
         }
@@ -395,20 +395,20 @@
     };
 
     Model.prototype._triggerUp = function() {
-      var args, i, model, name, path, _i, _ref, _results;
-      name = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      var args, i, j, model, name, path, ref, results;
+      name = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
       model = this;
       path = '';
-      _results = [];
-      for (i = _i = 0; _i <= 20; i = ++_i) {
+      results = [];
+      for (i = j = 0; j <= 20; i = ++j) {
         if (model == null) {
           break;
         }
-        model.trigger.apply(model, [name, path].concat(__slice.call(args)));
-        path = "/" + ((_ref = model[this.idAttribute]) != null ? _ref : '') + path;
-        _results.push(model = model._parent);
+        model.trigger.apply(model, [name, path].concat(slice.call(args)));
+        path = "/" + ((ref = model[this.idAttribute]) != null ? ref : '') + path;
+        results.push(model = model._parent);
       }
-      return _results;
+      return results;
     };
 
     Model.prototype.save = function(options) {
@@ -417,19 +417,19 @@
     };
 
     Model.prototype.destroy = function(options) {
-      var _ref;
+      var ref;
       this.trigger('destroy', this, options);
       if (!this.isNew()) {
         this._root().trigger('destroy_request', this.path(), this, options);
       }
-      return (_ref = this._parent) != null ? _ref.remove(this) : void 0;
+      return (ref = this._parent) != null ? ref.remove(this) : void 0;
     };
 
     Model.prototype.reset = function(a, b, options) {
-      var key, value, _ref;
-      _ref = this._properties;
-      for (key in _ref) {
-        value = _ref[key];
+      var key, ref, value;
+      ref = this._properties;
+      for (key in ref) {
+        value = ref[key];
         this.unset(key);
       }
       if (a != null) {
@@ -446,8 +446,8 @@
 
   })(Smackbone.Event);
 
-  Smackbone.Collection = (function(_super) {
-    __extends(Collection, _super);
+  Smackbone.Collection = (function(superClass) {
+    extend(Collection, superClass);
 
     function Collection() {
       return Collection.__super__.constructor.apply(this, arguments);
@@ -462,27 +462,28 @@
     };
 
     Collection.prototype.set = function(key, value, options) {
-      var array, attributes, id, o, _i, _len, _ref, _ref1;
+      var array, attributes, id, j, len, o, ref, ref1;
       if (typeof key === 'object') {
-        if (_.isEmpty(key)) {
-          return;
-        }
-        array = _.isArray(key) ? array = key : array = [key];
-        attributes = {};
-        options = value;
-        for (_i = 0, _len = array.length; _i < _len; _i++) {
-          o = array[_i];
-          id = (_ref = o[this.idAttribute]) != null ? _ref : o.cid;
-          if (id == null) {
-            o = this._createModelFromName(void 0, o, Smackbone.Model);
-            id = (_ref1 = o[this.idAttribute]) != null ? _ref1 : o.cid;
-          }
-          if (o instanceof Smackbone.Model) {
-            if (o._parent == null) {
-              o._parent = this;
+        array = _.isArray(key) ? key : [key];
+        if (array.length === 0) {
+          return this.reset();
+        } else {
+          attributes = {};
+          options = value;
+          for (j = 0, len = array.length; j < len; j++) {
+            o = array[j];
+            id = (ref = o[this.idAttribute]) != null ? ref : o.cid;
+            if (id == null) {
+              o = this._createModelFromName(void 0, o, Smackbone.Model);
+              id = (ref1 = o[this.idAttribute]) != null ? ref1 : o.cid;
             }
+            if (o instanceof Smackbone.Model) {
+              if (o._parent == null) {
+                o._parent = this;
+              }
+            }
+            attributes[id] = o;
           }
-          attributes[id] = o;
         }
       } else {
         (attributes = {})[key] = value;
@@ -498,13 +499,13 @@
 
   })(Smackbone.Model);
 
-  Smackbone.Syncer = (function(_super) {
-    __extends(Syncer, _super);
+  Smackbone.Syncer = (function(superClass) {
+    extend(Syncer, superClass);
 
     function Syncer(options) {
-      this._onDestroyRequest = __bind(this._onDestroyRequest, this);
-      this._onSaveRequest = __bind(this._onSaveRequest, this);
-      this._onFetchRequest = __bind(this._onFetchRequest, this);
+      this._onDestroyRequest = bind(this._onDestroyRequest, this);
+      this._onSaveRequest = bind(this._onSaveRequest, this);
+      this._onFetchRequest = bind(this._onFetchRequest, this);
       this.root = options.model;
       this.root.on('fetch_request', this._onFetchRequest);
       this.root.on('save_request', this._onSaveRequest);
@@ -559,13 +560,13 @@
     Syncer.prototype._encodeQueryObject = function(queryObject) {
       var array, key, value;
       array = (function() {
-        var _results;
-        _results = [];
+        var results;
+        results = [];
         for (key in queryObject) {
           value = queryObject[key];
-          _results.push("" + key + "=" + value);
+          results.push(key + "=" + value);
         }
-        return _results;
+        return results;
       })();
       if (array.length) {
         return encodeURI('?' + array.join('&'));
@@ -575,13 +576,13 @@
     };
 
     Syncer.prototype._request = function(options, path, queryObject) {
-      var queryString, _ref, _ref1;
+      var queryString, ref, ref1;
       queryString = this._encodeQueryObject(queryObject);
-      options.url = ((_ref = this.urlRoot) != null ? _ref : '') + path + queryString;
+      options.url = ((ref = this.urlRoot) != null ? ref : '') + path + queryString;
       if (options.type === 'GET') {
         options.data = void 0;
       } else {
-        options.data = JSON.stringify((_ref1 = options.data) != null ? _ref1.toJSON() : void 0);
+        options.data = JSON.stringify((ref1 = options.data) != null ? ref1.toJSON() : void 0);
       }
       options.contentType = 'application/json';
       this.trigger('request', options);
