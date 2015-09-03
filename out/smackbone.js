@@ -465,25 +465,21 @@
       var array, attributes, id, j, len, o, ref, ref1;
       if (typeof key === 'object') {
         array = _.isArray(key) ? key : [key];
-        if (array.length === 0) {
-          return this.reset();
-        } else {
-          attributes = {};
-          options = value;
-          for (j = 0, len = array.length; j < len; j++) {
-            o = array[j];
-            id = (ref = o[this.idAttribute]) != null ? ref : o.cid;
-            if (id == null) {
-              o = this._createModelFromName(void 0, o, Smackbone.Model);
-              id = (ref1 = o[this.idAttribute]) != null ? ref1 : o.cid;
-            }
-            if (o instanceof Smackbone.Model) {
-              if (o._parent == null) {
-                o._parent = this;
-              }
-            }
-            attributes[id] = o;
+        attributes = {};
+        options = value;
+        for (j = 0, len = array.length; j < len; j++) {
+          o = array[j];
+          id = (ref = o[this.idAttribute]) != null ? ref : o.cid;
+          if (id == null) {
+            o = this._createModelFromName(void 0, o, Smackbone.Model);
+            id = (ref1 = o[this.idAttribute]) != null ? ref1 : o.cid;
           }
+          if (o instanceof Smackbone.Model) {
+            if (o._parent == null) {
+              o._parent = this;
+            }
+          }
+          attributes[id] = o;
         }
       } else {
         (attributes = {})[key] = value;

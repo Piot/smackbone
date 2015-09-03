@@ -424,7 +424,23 @@ You can not lookup a specific object after it is added, only enumerate the colle
 			@collection.should.have.length 1
 			@collection.get(43).something.should.equal 'world'
 			@collection.set []
+			@collection.should.have.length 1
+			@collection.set [],
+				triggerRemove: true
 			@collection.should.have.length 0
+
+		it 'should handle an array replacement', ->
+			@collection.add {id:43, something: 'world'}
+			@collection.add {id:44, something: 'hello'}
+			@collection.should.have.length 2
+			@collection.get(43).something.should.equal 'world'
+			@collection.set [{id:44, something: 'else'}]
+			@collection.get(44).something.should.equal 'else'
+
+			@collection.set [{id:44, something: 'else'}],
+				triggerRemove: true
+			@collection.first().something.should.equal 'else'
+			@collection.should.have.length 1
 
 		describe 'isEmpty', ->
 			it 'should respond if its empty or not', ->

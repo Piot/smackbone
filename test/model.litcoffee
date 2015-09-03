@@ -429,3 +429,11 @@
 			@model.set data, options
 
 			done()
+
+		it 'should handle empty array', ->
+			@model.set 'list', new smackbone.Collection()
+			@model.get('list').add {something: 'else'}
+			@model.get('list').should.have.length 1
+			@model.set {list: []},
+				triggerRemove: true
+			@model.get('list').should.have.length 0
