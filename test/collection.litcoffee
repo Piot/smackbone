@@ -429,6 +429,13 @@ You can not lookup a specific object after it is added, only enumerate the colle
 				triggerRemove: true
 			@collection.should.have.length 0
 
+		it 'should not report change on empty array replacement', ->
+			@collection.on 'change', ->
+				console.log 'fail!!'
+				assert.fail()
+			@collection.set [],
+				triggerRemove: true
+
 		it 'should handle an array replacement', ->
 			@collection.add {id:43, something: 'world'}
 			@collection.add {id:44, something: 'hello'}

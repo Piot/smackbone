@@ -437,3 +437,14 @@
 			@model.set {list: []},
 				triggerRemove: true
 			@model.get('list').should.have.length 0
+
+		it 'should handle empty array', ->
+			@model.set 'sub', new smackbone.Collection()
+
+			@model.on 'change:sub', ->
+				throw new Error 'failed empty array'
+
+			@model.set {sub: []},
+				triggerRemove: true
+
+			@model.get('sub').should.have.length 0
