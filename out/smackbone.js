@@ -184,6 +184,17 @@
       return this.set(nextId, o);
     };
 
+    Model._isEqual = function(a, b) {
+      var sameThing;
+      if (a instanceof Smackbone.Model && _.isArray(b)) {
+        sameThing = a.isEmpty() && b.length === 0;
+        if (sameThing) {
+          return true;
+        }
+      }
+      return _.isEqual(a, b);
+    };
+
     Model.prototype.set = function(key, value, options) {
       var addedAttributes, attributes, changeName, changedPropertyNames, current, existingObject, j, k, l, len, len1, len2, n, name, oldId, previous, ref, ref1, ref2, removedAttributes, results, v;
       if (key == null) {
@@ -219,10 +230,10 @@
       }
       for (name in attributes) {
         value = attributes[name];
-        if (!_.isEqual(current[name], value)) {
+        if (!Smackbone.Model._isEqual(current[name], value)) {
           changedPropertyNames.push(name);
         }
-        if (!_.isEqual(previous[name], value)) {
+        if (!Smackbone.Model._isEqual(previous[name], value)) {
           this.changed[name] = value;
         }
         if ((((ref2 = current[name]) != null ? ref2.set : void 0) != null) && !(value instanceof Smackbone.Model) && (value != null)) {

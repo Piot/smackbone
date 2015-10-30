@@ -36,6 +36,12 @@
 			@unset currentId
 			@set nextId, o
 
+		@_isEqual: (a, b) ->
+			if a instanceof Smackbone.Model and _.isArray b
+				sameThing = a.isEmpty() and b.length is 0
+				return true if sameThing
+			return _.isEqual a, b
+
 		set: (key, value, options) ->
 			throw new Error 'can not set with undefined' if not key?
 
@@ -65,10 +71,10 @@
 					removedAttributes.push name
 
 			for name, value of attributes
-				if !_.isEqual current[name], value
+				if !Smackbone.Model._isEqual current[name], value
 					changedPropertyNames.push name
 
-				if !_.isEqual previous[name], value
+				if !Smackbone.Model._isEqual previous[name], value
 					@changed[name] = value
 
 				if current[name]?.set? and not (value instanceof Smackbone.Model) and value?

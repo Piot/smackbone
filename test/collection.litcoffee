@@ -431,8 +431,8 @@ You can not lookup a specific object after it is added, only enumerate the colle
 
 		it 'should not report change on empty array replacement', ->
 			@collection.on 'change', ->
-				console.log 'fail!!'
-				assert.fail()
+				cthrow new Error 'failed empty array'
+
 			@collection.set [],
 				triggerRemove: true
 
